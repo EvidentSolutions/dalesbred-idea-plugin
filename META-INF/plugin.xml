@@ -1,0 +1,42 @@
+<idea-plugin version="2">
+  <id>fi.evident.dalesbred.plugin.idea</id>
+  <name>Dalesbred Support</name>
+  <version>0.1</version>
+  <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
+
+  <description><![CDATA[
+      <a href="https://bitbucket.org/evidentsolutions/dalesbred">Dalesbred</a> support for IDEA.
+      ]]></description>
+
+  <change-notes><![CDATA[
+      Initial revision
+      ]]>
+  </change-notes>
+
+  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="107.105"/>
+
+  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+  <depends>com.intellij.modules.java</depends>
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+      <annotator language="JAVA" implementationClass="fi.evident.dalesbred.plugin.idea.DalesbredAnnotator" />
+  </extensions>
+</idea-plugin>
