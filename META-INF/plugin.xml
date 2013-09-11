@@ -40,5 +40,10 @@
                          groupName="Dalesbred"
                          enabledByDefault="true"
                          implementationClass="fi.evident.dalesbred.plugin.idea.DalesbredUninstantiableResultInspection"/>
+        <localInspection displayName="Invalid amount of parameters"
+                         language="JAVA"
+                         groupName="Dalesbred"
+                         enabledByDefault="true"
+                         implementationClass="fi.evident.dalesbred.plugin.idea.DalesbredIncorrectParameterCountInspection"/>
     </extensions>
 </idea-plugin>
