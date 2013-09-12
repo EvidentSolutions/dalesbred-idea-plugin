@@ -44,13 +44,25 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
     }
 
     @Nullable
-    private static PsiClass resolveType(@NotNull PsiExpression value) {
-        if (value instanceof PsiClassObjectAccessExpression) {
-            PsiType type = ((PsiClassObjectAccessExpression) value).getOperand().getType();
-            if (type instanceof PsiClassType)
-                return ((PsiClassType) type).resolve();
-        }
+    private static PsiClass resolveType(@NotNull PsiExpression root) {
+        PsiExpression exp = root;
+        while (true) {
+            if (exp instanceof PsiClassObjectAccessExpression) {
+                PsiType type = ((PsiClassObjectAccessExpression) exp).getOperand().getType();
+                if (type instanceof PsiClassType)
+                    return ((PsiClassType) type).resolve();
 
-        return null;
+            } else if (exp instanceof PsiReferenceExpression) {
+                PsiElement resolved = ((PsiReference) exp).resolve();
+                if (resolved instanceof PsiVariable) {
+                    PsiExpression initializer = ((PsiVariable) resolved).getInitializer();
+                    if (initializer != null)
+                        exp = initializer;
+                }
+
+            } else {
+                return null;
+            }
+        }
     }
 }
