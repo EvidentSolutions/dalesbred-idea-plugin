@@ -37,7 +37,12 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
 
     private static void verifyParameterIsInstantiable(@NotNull PsiExpression parameter, @NotNull ProblemsHolder holder) {
         PsiClass cl = resolveType(parameter);
-        if (cl != null && cl.isInterface()) {
+        if (cl == null) return;
+
+        if (cl.isAnnotationType()) {
+            holder.registerProblem(parameter, "Class may not refer to an annotation type.");
+
+        } else if (cl.isInterface()) {
             // TODO: allow interfaces of known (and registered) types
             holder.registerProblem(parameter, "Class may not refer to an interface.");
         }
