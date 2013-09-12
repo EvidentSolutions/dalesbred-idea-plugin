@@ -21,18 +21,26 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
             @Override
             public void visitMethodCallExpression(PsiMethodCallExpression expression) {
                 if (FIND_METHOD_CALL.accepts(expression)) {
+                    String methodName = expression.getMethodExpression().getReferenceName();
                     PsiExpression[] parameters = expression.getArgumentList().getExpressions();
-                    if (parameters.length != 0) {
-                        PsiExpression firstParameterExp = parameters[0];
-                        PsiClass cl = resolveType(firstParameterExp);
-                        if (cl != null && cl.isInterface()) {
-                            // TODO: allow interfaces of known (and registered) types
-                            holder.registerProblem(firstParameterExp, "Class may not refer to an interface.");
-                        }
+
+                    if ("findMap".equals(methodName)) {
+                        verifyParameterIsInstantiable(parameters[0], holder);
+                        verifyParameterIsInstantiable(parameters[1], holder);
+                    } else {
+                        verifyParameterIsInstantiable(parameters[0], holder);
                     }
                 }
             }
         };
+    }
+
+    private static void verifyParameterIsInstantiable(@NotNull PsiExpression parameter, @NotNull ProblemsHolder holder) {
+        PsiClass cl = resolveType(parameter);
+        if (cl != null && cl.isInterface()) {
+            // TODO: allow interfaces of known (and registered) types
+            holder.registerProblem(parameter, "Class may not refer to an interface.");
+        }
     }
 
     @Nullable

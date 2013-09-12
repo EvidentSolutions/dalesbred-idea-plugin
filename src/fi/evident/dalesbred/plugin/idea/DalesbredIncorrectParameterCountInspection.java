@@ -22,21 +22,29 @@ public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalIns
             @Override
             public void visitMethodCallExpression(PsiMethodCallExpression expression) {
                 if (FIND_METHOD_CALL.accepts(expression)) {
+                    String methodName = expression.getMethodExpression().getReferenceName();
                     PsiExpression[] parameters = expression.getArgumentList().getExpressions();
 
-                    if (parameters.length >= 1) {
-                        String sql = resolveQueryString(parameters[1]);
-                        if (sql != null) {
-                            int expected = countQueryParametersPlaceholders(sql);
-
-                            int actual = parameters.length - 2;
-                            if (actual != expected)
-                                holder.registerProblem(expression, "Expected " + expected + " query parameters, but got " + actual + '.');
-                        }
+                    if ("findMap".equals(methodName)) {
+                        verifyQueryParameterCount(parameters, 2, holder);
+                    } else {
+                        verifyQueryParameterCount(parameters, 1, holder);
                     }
                 }
             }
         };
+    }
+
+    private static void verifyQueryParameterCount(@NotNull PsiExpression[] parameters, int queryIndex, @NotNull ProblemsHolder holder) {
+        PsiExpression queryParameter = parameters[queryIndex];
+        String sql = resolveQueryString(queryParameter);
+        if (sql != null) {
+            int expected = countQueryParametersPlaceholders(sql);
+
+            int actual = parameters.length - (queryIndex+1);
+            if (actual != expected)
+                holder.registerProblem(queryParameter, "Expected " + expected + " query parameters, but got " + actual + '.');
+        }
     }
 
     @Nullable
