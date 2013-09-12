@@ -4,12 +4,22 @@ import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.patterns.PsiMethodCallPattern;
 import com.intellij.psi.*;
+import fi.evident.dalesbred.plugin.idea.ui.ClassList;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static fi.evident.dalesbred.plugin.idea.DalesbredPatterns.psiDalesbredFindMethodCall;
 
 public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspectionTool {
+
+    @NonNls
+    public List<String> allowedTypes = new ArrayList<String>();
 
     private static final PsiMethodCallPattern FIND_METHOD_CALL = psiDalesbredFindMethodCall();
 
@@ -35,10 +45,11 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
         };
     }
 
-    private static void verifyParameterIsInstantiable(@NotNull PsiExpression parameter, @NotNull ProblemsHolder holder) {
+    private void verifyParameterIsInstantiable(@NotNull PsiExpression parameter, @NotNull ProblemsHolder holder) {
         PsiClass cl = resolveType(parameter);
         if (cl != null) {
-            // TODO: allow instances of known and registered types
+            if (allowedTypes.contains(cl.getQualifiedName()))
+                return;
 
             String error = findErrorForType(cl);
             if (error != null)
@@ -89,5 +100,13 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
                 return null;
             }
         }
+    }
+
+    @SuppressWarnings("MagicNumber")
+    @Override
+    public JComponent createOptionsPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(ClassList.createSpecialAnnotationsListControl(allowedTypes, "Allowed types"), BorderLayout.CENTER);
+        return panel;
     }
 }
