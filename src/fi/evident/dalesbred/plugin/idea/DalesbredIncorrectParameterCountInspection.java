@@ -3,13 +3,16 @@ package fi.evident.dalesbred.plugin.idea;
 import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.patterns.PsiMethodCallPattern;
-import com.intellij.patterns.PsiMethodPattern;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.patterns.PsiJavaPatterns.*;
+import static fi.evident.dalesbred.plugin.idea.DalesbredPatterns.psiDalesbredFindMethodCall;
+import static fi.evident.dalesbred.plugin.idea.SqlUtils.countQueryParametersPlaceholders;
 
 public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalInspectionTool {
+
+    private static final PsiMethodCallPattern FIND_METHOD_CALL = psiDalesbredFindMethodCall();
 
     @NotNull
     @Override
@@ -18,23 +21,17 @@ public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalIns
 
             @Override
             public void visitMethodCallExpression(PsiMethodCallExpression expression) {
-                PsiMethodPattern method = psiMethod().definedInClass("fi.evident.dalesbred.Database").withName(string().oneOf("findUnique", "findAll", "findUniqueOrNull"));
-                PsiMethodCallPattern call = psiExpression().methodCall(method);
-
-                if (call.accepts(expression)) {
+                if (FIND_METHOD_CALL.accepts(expression)) {
                     PsiExpression[] parameters = expression.getArgumentList().getExpressions();
 
-                    if (parameters[1] instanceof PsiLiteralExpression) {
-                        PsiLiteralExpression exp = (PsiLiteralExpression) parameters[1];
-                        Object value = exp.getValue();
-                        if (value instanceof String) {
-                            String sql = (String) value;
-                            int expected = countParameters(sql);
+                    if (parameters.length >= 1) {
+                        String sql = resolveQueryString(parameters[1]);
+                        if (sql != null) {
+                            int expected = countQueryParametersPlaceholders(sql);
 
-                            int actual = parameters.length-2;
-                            if (actual != expected) {
+                            int actual = parameters.length - 2;
+                            if (actual != expected)
                                 holder.registerProblem(expression, "Expected " + expected + " query parameters, but got " + actual + '.');
-                            }
                         }
                     }
                 }
@@ -42,11 +39,14 @@ public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalIns
         };
     }
 
-    private static int countParameters(@NotNull String sql) {
-        int count = 0;
-        for (int i = 0, len = sql.length(); i < len; i++)
-            if (sql.charAt(i) == '?')
-                count++;
-        return count;
+    @Nullable
+    private static String resolveQueryString(@NotNull PsiExpression queryParameter) {
+        if (queryParameter instanceof PsiLiteralExpression) {
+            PsiLiteralExpression exp = (PsiLiteralExpression) queryParameter;
+            Object value = exp.getValue();
+            if (value instanceof String)
+                return (String) value;
+        }
+        return null;
     }
 }

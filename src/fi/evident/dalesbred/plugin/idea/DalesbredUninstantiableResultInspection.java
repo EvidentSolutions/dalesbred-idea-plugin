@@ -3,14 +3,15 @@ package fi.evident.dalesbred.plugin.idea;
 import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.patterns.PsiMethodCallPattern;
-import com.intellij.patterns.PsiMethodPattern;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.patterns.PsiJavaPatterns.*;
+import static fi.evident.dalesbred.plugin.idea.DalesbredPatterns.psiDalesbredFindMethodCall;
 
 public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspectionTool {
+
+    private static final PsiMethodCallPattern FIND_METHOD_CALL = psiDalesbredFindMethodCall();
 
     @NotNull
     @Override
@@ -19,15 +20,15 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
 
             @Override
             public void visitMethodCallExpression(PsiMethodCallExpression expression) {
-                PsiMethodPattern method = psiMethod().definedInClass("fi.evident.dalesbred.Database").withName(string().oneOf("findUnique", "findAll", "findUniqueOrNull"));
-                PsiMethodCallPattern call = psiExpression().methodCall(method);
-
-                if (call.accepts(expression)) {
-                    PsiExpression firstParameterExp = expression.getArgumentList().getExpressions()[0];
-                    PsiClass cl = resolveType(firstParameterExp);
-                    if (cl != null && cl.isInterface()) {
-                        // TODO: allow interfaces of known (and registered) types
-                        holder.registerProblem(firstParameterExp, "Class may not refer to an interface.");
+                if (FIND_METHOD_CALL.accepts(expression)) {
+                    PsiExpression[] parameters = expression.getArgumentList().getExpressions();
+                    if (parameters.length != 0) {
+                        PsiExpression firstParameterExp = parameters[0];
+                        PsiClass cl = resolveType(firstParameterExp);
+                        if (cl != null && cl.isInterface()) {
+                            // TODO: allow interfaces of known (and registered) types
+                            holder.registerProblem(firstParameterExp, "Class may not refer to an interface.");
+                        }
                     }
                 }
             }
