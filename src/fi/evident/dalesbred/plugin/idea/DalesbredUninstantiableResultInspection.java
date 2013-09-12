@@ -39,13 +39,24 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
         PsiClass cl = resolveType(parameter);
         if (cl == null) return;
 
+        // TODO: allow instances of known and registered types
+
         if (cl.isAnnotationType()) {
-            holder.registerProblem(parameter, "Class may not refer to an annotation type.");
+            holder.registerProblem(parameter, "Class may not be an annotation type.");
 
         } else if (cl.isInterface()) {
-            // TODO: allow interfaces of known (and registered) types
-            holder.registerProblem(parameter, "Class may not refer to an interface.");
+            holder.registerProblem(parameter, "Class may not be an interface.");
+
+        } else if (isNonStaticInnerClass(cl)) {
+            holder.registerProblem(parameter, "Class may not be a non-static inner class.");
         }
+    }
+
+    private static boolean isNonStaticInnerClass(@NotNull PsiClass cl) {
+        if (cl.getContainingClass() == null) return false;
+
+        PsiModifierList modifiers = cl.getModifierList();
+        return modifiers == null || !modifiers.hasModifierProperty(PsiModifier.STATIC);
     }
 
     @Nullable
