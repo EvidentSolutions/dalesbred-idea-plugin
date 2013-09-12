@@ -3,10 +3,14 @@ package fi.evident.dalesbred.plugin.idea;
 import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.patterns.PsiMethodCallPattern;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaElementVisitor;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiMethodCallExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.psi.impl.JavaConstantExpressionEvaluator.computeConstantExpression;
 import static fi.evident.dalesbred.plugin.idea.DalesbredPatterns.psiDalesbredFindMethodCall;
 import static fi.evident.dalesbred.plugin.idea.DalesbredPatterns.psiDalesbredSqlQueryMethodCall;
 import static fi.evident.dalesbred.plugin.idea.SqlUtils.countQueryParametersPlaceholders;
@@ -54,12 +58,7 @@ public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalIns
 
     @Nullable
     private static String resolveQueryString(@NotNull PsiExpression parameter) {
-        if (parameter instanceof PsiLiteralExpression) {
-            PsiLiteralExpression literal = (PsiLiteralExpression) parameter;
-            Object value = literal.getValue();
-            if (value instanceof String)
-                return (String) value;
-        }
-        return null;
+        Object value = computeConstantExpression(parameter, false);
+        return (value instanceof String) ? (String) value : null;
     }
 }
