@@ -19,6 +19,21 @@ final class DalesbredPatterns {
     }
 
     @NotNull
+    static PsiClassPattern psiSqlQueryClass() {
+        return psiClass().withQualifiedName("fi.evident.dalesbred.SqlQuery");
+    }
+
+    @NotNull
+    static PsiMethodCallPattern psiDalesbredSqlQueryMethodCall() {
+        return psiExpression().methodCall(psiDalesbredSqlQueryMethod());
+    }
+
+    @NotNull
+    private static PsiMethodPattern psiDalesbredSqlQueryMethod() {
+        return psiMethod().definedInClass(psiSqlQueryClass()).withName("query").withParameters("java.lang.String", "java.lang.Object[]");
+    }
+
+    @NotNull
     static PsiMethodPattern psiDalesbredFindMethod() {
         return psiMethod().definedInClass(psiDatabaseClass()).withName(string().oneOf("findUnique", "findAll", "findUniqueOrNull", "findMap"));
     }
