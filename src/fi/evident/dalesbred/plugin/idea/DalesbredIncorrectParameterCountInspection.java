@@ -45,6 +45,8 @@ public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalIns
     }
 
     private static void verifyQueryParameterCount(@NotNull PsiExpression[] parameters, int queryIndex, @NotNull ProblemsHolder holder) {
+        if (queryIndex >= parameters.length) return;
+
         PsiExpression queryParameter = parameters[queryIndex];
         String sql = resolveQueryString(queryParameter);
         if (sql != null) {
