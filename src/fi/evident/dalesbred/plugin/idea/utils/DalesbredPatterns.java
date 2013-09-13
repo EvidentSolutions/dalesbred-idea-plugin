@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea;
+package fi.evident.dalesbred.plugin.idea.utils;
 
 import com.intellij.patterns.PsiClassPattern;
 import com.intellij.patterns.PsiMethodCallPattern;
@@ -30,38 +30,38 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.patterns.PsiJavaPatterns.*;
 import static com.intellij.patterns.StandardPatterns.string;
 
-final class DalesbredPatterns {
+public final class DalesbredPatterns {
 
     private DalesbredPatterns() {
     }
 
     @NotNull
-    static PsiClassPattern psiDatabaseClass() {
+    public static PsiClassPattern databaseClass() {
         return psiClass().withQualifiedName("fi.evident.dalesbred.Database");
     }
 
     @NotNull
-    static PsiClassPattern psiSqlQueryClass() {
+    public static PsiClassPattern sqlQueryClass() {
         return psiClass().withQualifiedName("fi.evident.dalesbred.SqlQuery");
     }
 
     @NotNull
-    static PsiMethodCallPattern psiDalesbredSqlQueryMethodCall() {
-        return psiExpression().methodCall(psiDalesbredSqlQueryMethod());
+    public static PsiMethodCallPattern dalesbredSqlQueryMethodCall() {
+        return psiExpression().methodCall(dalesbredSqlQueryMethod());
     }
 
     @NotNull
-    private static PsiMethodPattern psiDalesbredSqlQueryMethod() {
-        return psiMethod().definedInClass(psiSqlQueryClass()).withName("query").withParameters("java.lang.String", "java.lang.Object[]");
+    public static PsiMethodPattern dalesbredSqlQueryMethod() {
+        return psiMethod().definedInClass(sqlQueryClass()).withName("query").withParameters("java.lang.String", "java.lang.Object[]");
     }
 
     @NotNull
-    static PsiMethodPattern psiDalesbredFindMethod() {
-        return psiMethod().definedInClass(psiDatabaseClass()).withName(string().oneOf("findUnique", "findAll", "findUniqueOrNull", "findMap"));
+    public static PsiMethodPattern dalesbredFindMethod() {
+        return psiMethod().definedInClass(databaseClass()).withName(string().oneOf("findUnique", "findAll", "findUniqueOrNull", "findMap"));
     }
 
     @NotNull
-    static PsiMethodCallPattern psiDalesbredFindMethodCall() {
-        return psiExpression().methodCall(psiDalesbredFindMethod());
+    public static PsiMethodCallPattern dalesbredFindMethodCall() {
+        return psiExpression().methodCall(dalesbredFindMethod());
     }
 }

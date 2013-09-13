@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
 
     <description><![CDATA[
@@ -22,11 +22,11 @@
                          language="JAVA"
                          groupName="Dalesbred"
                          enabledByDefault="true"
-                         implementationClass="fi.evident.dalesbred.plugin.idea.DalesbredUninstantiableResultInspection"/>
+                         implementationClass="fi.evident.dalesbred.plugin.idea.inspections.DalesbredUninstantiableResultInspection"/>
         <localInspection displayName="Invalid amount of parameters"
                          language="JAVA"
                          groupName="Dalesbred"
                          enabledByDefault="true"
-                         implementationClass="fi.evident.dalesbred.plugin.idea.DalesbredIncorrectParameterCountInspection"/>
+                         implementationClass="fi.evident.dalesbred.plugin.idea.inspections.DalesbredIncorrectParameterCountInspection"/>
     </extensions>
 </idea-plugin>

@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea;
+package fi.evident.dalesbred.plugin.idea.inspections;
 
 import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -33,14 +33,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.psi.impl.JavaConstantExpressionEvaluator.computeConstantExpression;
-import static fi.evident.dalesbred.plugin.idea.DalesbredPatterns.psiDalesbredFindMethodCall;
-import static fi.evident.dalesbred.plugin.idea.DalesbredPatterns.psiDalesbredSqlQueryMethodCall;
-import static fi.evident.dalesbred.plugin.idea.SqlUtils.countQueryParametersPlaceholders;
+import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.dalesbredFindMethodCall;
+import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.dalesbredSqlQueryMethodCall;
+import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.countQueryParametersPlaceholders;
 
 public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalInspectionTool {
 
-    private static final PsiMethodCallPattern FIND_METHOD_CALL = psiDalesbredFindMethodCall();
-    private static final PsiMethodCallPattern SQL_QUERY_METHOD_CALL = psiDalesbredSqlQueryMethodCall();
+    private static final PsiMethodCallPattern FIND_METHOD_CALL = dalesbredFindMethodCall();
+    private static final PsiMethodCallPattern SQL_QUERY_METHOD_CALL = dalesbredSqlQueryMethodCall();
 
     @NotNull
     @Override

@@ -20,13 +20,12 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea;
+package fi.evident.dalesbred.plugin.idea.inspections;
 
 import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.patterns.PsiMethodCallPattern;
 import com.intellij.psi.*;
-import fi.evident.dalesbred.plugin.idea.ui.ClassList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,14 +35,15 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fi.evident.dalesbred.plugin.idea.DalesbredPatterns.psiDalesbredFindMethodCall;
+import static fi.evident.dalesbred.plugin.idea.ui.ClassList.createClassesListControl;
+import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.dalesbredFindMethodCall;
 
 public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspectionTool {
 
     @NonNls
     public List<String> allowedTypes = new ArrayList<String>();
 
-    private static final PsiMethodCallPattern FIND_METHOD_CALL = psiDalesbredFindMethodCall();
+    private static final PsiMethodCallPattern FIND_METHOD_CALL = dalesbredFindMethodCall();
 
     @NotNull
     @Override
@@ -124,11 +124,10 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
         }
     }
 
-    @SuppressWarnings("MagicNumber")
     @Override
     public JComponent createOptionsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(ClassList.createSpecialAnnotationsListControl(allowedTypes, "Allowed types"), BorderLayout.CENTER);
+        panel.add(createClassesListControl(allowedTypes, "Allowed types"), BorderLayout.CENTER);
         return panel;
     }
 }

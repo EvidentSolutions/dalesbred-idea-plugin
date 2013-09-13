@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea;
+package fi.evident.dalesbred.plugin.idea.inspections;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.JavaSdk;

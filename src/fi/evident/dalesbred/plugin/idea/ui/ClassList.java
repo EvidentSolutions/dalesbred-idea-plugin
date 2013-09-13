@@ -29,83 +29,59 @@ import com.intellij.ide.util.TreeClassChooserFactory;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.vcs.ComparableComparator;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.*;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.SortedListModel;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import java.awt.*;
-import java.util.Comparator;
 import java.util.List;
+
+import static com.intellij.ui.SeparatorFactory.createSeparator;
 
 public final class ClassList {
     private ClassList() {
     }
 
-    public static JPanel createSpecialAnnotationsListControl(final List<String> list, String borderTitle) {
-        final SortedListModel<String> listModel = new SortedListModel<String>(new Comparator<String>() {
-            @Override
-            public int compare(@NotNull String o1, @NotNull String o2) {
-                return o1.compareTo(o2);
-            }
-        });
-        final JList injectionList = new JBList(listModel);
-        for (String s : list) {
-            listModel.add(s);
-        }
-        injectionList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        injectionList.getModel().addListDataListener(new ListDataListener() {
-            @Override
-            public void intervalAdded(@NotNull ListDataEvent e) {
-                listChanged();
-            }
+    @NotNull
+    public static JPanel createClassesListControl(@NotNull List<String> classNames, @NotNull String title) {
+        SortedListModel<String> listModel = SortedListModel.create(new ComparableComparator<String>());
+        listModel.addAll(classNames);
 
-            private void listChanged() {
-                list.clear();
-                for (int i = 0; i < listModel.getSize(); i++) {
-                    list.add((String)listModel.getElementAt(i));
-                }
-            }
-
-            @Override
-            public void intervalRemoved(@NotNull ListDataEvent e) {
-                listChanged();
-            }
-
-            @Override
-            public void contentsChanged(@NotNull ListDataEvent e) {
-                listChanged();
-            }
-        });
-
-        ToolbarDecorator toolbarDecorator = ToolbarDecorator.createDecorator(injectionList)
-                .setAddAction(new AnActionButtonRunnable() {
-                    @Override
-                    public void run(AnActionButton button) {
-                        Project project = PlatformDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(injectionList));
-                        if (project == null) project = ProjectManager.getInstance().getDefaultProject();
-                        TreeClassChooser chooser = TreeClassChooserFactory.getInstance(project)
-                                .createWithInnerClassesScopeChooser("Class", GlobalSearchScope.allScope(project), new ClassFilter() {
-                                    @Override
-                                    public boolean isAccepted(PsiClass aClass) {
-                                        return true;
-                                    }
-                                }, null);
-                        chooser.showDialog();
-                        PsiClass selected = chooser.getSelected();
-                        if (selected != null) {
-                            listModel.add(selected.getQualifiedName());
-                        }
-                    }
-                }).setAddActionName("Add Class").disableUpDownActions();
+        JList list = new JBList(listModel);
+        list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(SeparatorFactory.createSeparator(borderTitle, null), BorderLayout.NORTH);
-        panel.add(toolbarDecorator.createPanel(), BorderLayout.CENTER);
+        panel.add(createSeparator(title, null), BorderLayout.NORTH);
+        panel.add(createListWithActions(list, listModel).createPanel(), BorderLayout.CENTER);
         return panel;
+    }
+
+    @NotNull
+    private static ToolbarDecorator createListWithActions(@NotNull final JList list, @NotNull final SortedListModel<String> listModel) {
+        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(list);
+        decorator.setAddAction(new AnActionButtonRunnable() {
+            @Override
+            public void run(AnActionButton button) {
+                Project project = PlatformDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(list));
+                if (project == null)
+                    project = ProjectManager.getInstance().getDefaultProject();
+                TreeClassChooser chooser = TreeClassChooserFactory.getInstance(project)
+                        .createWithInnerClassesScopeChooser("Class", GlobalSearchScope.allScope(project), ClassFilter.ALL, null);
+                chooser.showDialog();
+                PsiClass selected = chooser.getSelected();
+                if (selected != null)
+                    listModel.add(selected.getQualifiedName());
+            }
+        });
+        decorator.setAddActionName("Add Class");
+        decorator.disableUpDownActions();
+        return decorator;
     }
 }

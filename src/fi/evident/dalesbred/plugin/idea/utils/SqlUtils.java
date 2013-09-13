@@ -20,27 +20,25 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea;
+package fi.evident.dalesbred.plugin.idea.utils;
 
-import org.junit.Test;
+import org.jetbrains.annotations.NotNull;
 
-import static fi.evident.dalesbred.plugin.idea.SqlUtils.countQueryParametersPlaceholders;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+public final class SqlUtils {
 
-public class SqlUtilsTest {
-
-    @Test
-    public void countQueryPlaceHolders() {
-       assertThat(countQueryParametersPlaceholders("select * from foo where x=4"), is(0));
-       assertThat(countQueryParametersPlaceholders("select * from foo where x=?"), is(1));
-       assertThat(countQueryParametersPlaceholders("select * from foo where x=? and y=?"), is(2));
-       assertThat(countQueryParametersPlaceholders("select ? from foo where x=? and y=?"), is(3));
+    private SqlUtils() {
     }
 
-    @Test
-    public void questionMarksInsideLiteralsAreNotPlaceholders() {
-        assertThat(countQueryParametersPlaceholders("select * from foo where x='foo?'"), is(0));
-        assertThat(countQueryParametersPlaceholders("select * from foo where x='foo '' ?'"), is(0));
+    public static int countQueryParametersPlaceholders(@NotNull String sql) {
+        boolean inLiteral = false;
+        int count = 0;
+        for (int i = 0, len = sql.length(); i < len; i++) {
+            char ch = sql.charAt(i);
+            if (ch == '\'')
+                inLiteral = !inLiteral;
+            else if (ch == '?' && !inLiteral)
+                count++;
+        }
+        return count;
     }
 }

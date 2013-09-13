@@ -20,25 +20,15 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea;
+package fi.evident.dalesbred.plugin.idea.inspections;
 
-import org.jetbrains.annotations.NotNull;
+@SuppressWarnings("JUnitTestMethodWithNoAssertions")
+public class DalesbredUninstantiableResultInspectionTest extends InspectionTestCase {
 
-final class SqlUtils {
+    public void testSimpleCases() {
+        //noinspection unchecked
+        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
 
-    private SqlUtils() {
-    }
-
-    static int countQueryParametersPlaceholders(@NotNull String sql) {
-        boolean inLiteral = false;
-        int count = 0;
-        for (int i = 0, len = sql.length(); i < len; i++) {
-            char ch = sql.charAt(i);
-            if (ch == '\'')
-                inLiteral = !inLiteral;
-            else if (ch == '?' && !inLiteral)
-                count++;
-        }
-        return count;
+        myFixture.testHighlighting("uninstantiableResult/SimpleCases.java");
     }
 }

@@ -20,15 +20,15 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea;
+package fi.evident.dalesbred.plugin.idea.inspections;
 
 @SuppressWarnings("JUnitTestMethodWithNoAssertions")
-public class DalesbredUninstantiableResultInspectionTest extends InspectionTestCase {
+public class DalesbredIncorrectParameterCountInspectionTest extends InspectionTestCase {
 
     public void testSimpleCases() {
         //noinspection unchecked
-        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
+        myFixture.enableInspections(DalesbredIncorrectParameterCountInspection.class);
 
-        myFixture.testHighlighting("uninstantiableResult/SimpleCases.java");
+        myFixture.testHighlighting("incorrectParameterCount/SimpleCases.java");
     }
 }
