@@ -24,6 +24,10 @@ public class SimpleCases {
         db.findAll(<warning descr="Class is not instantiable.">MyClassWithPrivateConstructor.class</warning>, "select 42 from foo");
     }
 
+    public void selectListWithStar() {
+        db.findAll(<warning descr="Can't verify construction when select list contains '*'.">String.class</warning>, "select * from foo");
+    }
+
     public class NonStaticInnerClass { }
 }
 

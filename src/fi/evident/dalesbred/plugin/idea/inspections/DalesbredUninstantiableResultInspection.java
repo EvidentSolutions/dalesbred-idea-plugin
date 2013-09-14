@@ -85,6 +85,9 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
     private static String verifySelectListMatchesResultType(@NotNull PsiClass resultType, @NotNull PsiExpression sqlParameter) {
         String sql = resolveQueryString(sqlParameter);
         if (sql != null) {
+            if (sql.contains("*"))
+                return "Can't verify construction when select list contains '*'.";
+
             List<String> selectItems = SqlUtils.selectVariables(sql);
 
             if (!hasMatchingConstructor(resultType, selectItems))
