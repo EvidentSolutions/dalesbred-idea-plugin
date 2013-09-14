@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
 
     <description><![CDATA[
