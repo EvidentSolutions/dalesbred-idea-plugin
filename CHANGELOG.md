@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 0.0.2 (2013-09-15)
 
   - More thorough instantiation inspections.
 
