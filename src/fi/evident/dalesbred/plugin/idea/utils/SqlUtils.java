@@ -24,9 +24,46 @@ package fi.evident.dalesbred.plugin.idea.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public final class SqlUtils {
 
+    private static final Pattern SELECT_LIST_PATTERN = Pattern.compile("\\s*select\\s+((all|distinct(\\s+on\\s*(\\(.*?\\)))?)\\s+)?(.+?)\\s+from.+", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(.+))?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern COMMA_SEP_PATTERN = Pattern.compile("\\s*,\\s*");
+
     private SqlUtils() {
+    }
+
+    @NotNull
+    public static List<String> selectVariables(@NotNull String sql) {
+        Matcher matcher = SELECT_LIST_PATTERN.matcher(sql);
+        if (matcher.matches()) {
+            String[] selectItems = COMMA_SEP_PATTERN.split(matcher.group(5));
+
+            List<String> result = new ArrayList<String>(selectItems.length);
+            for (String selectItem : selectItems)
+                result.add(parseSelectItem(selectItem));
+
+            return result;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @NotNull
+    private static String parseSelectItem(@NotNull String selectItem) {
+        Matcher matcher = SELECT_ITEM_PATTERN.matcher(selectItem);
+        assert matcher.matches();
+
+        if (matcher.group(5) != null)
+            return matcher.group(5);
+
+        return matcher.group(2);
     }
 
     public static int countQueryParametersPlaceholders(@NotNull String sql) {

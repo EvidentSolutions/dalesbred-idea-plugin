@@ -22,9 +22,15 @@
 
 package fi.evident.dalesbred.plugin.idea.utils;
 
+import org.hamcrest.Matcher;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
+import java.util.List;
+
 import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.countQueryParametersPlaceholders;
+import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.selectVariables;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -42,5 +48,56 @@ public class SqlUtilsTest {
     public void questionMarksInsideLiteralsAreNotPlaceholders() {
         assertThat(countQueryParametersPlaceholders("select * from foo where x='foo?'"), is(0));
         assertThat(countQueryParametersPlaceholders("select * from foo where x='foo '' ?'"), is(0));
+    }
+
+    @Test
+    public void parseSimpleSelectVariables() {
+        assertThat(selectVariables("select foo from bar"), is(variables("foo")));
+        assertThat(selectVariables("SELECT foo, bar, baz FROM foobar"), is(variables("foo", "bar", "baz")));
+    }
+
+    @Test
+    public void parseQualifiedSelectVariables() {
+        assertThat(selectVariables("select b.foo from bar b"), is(variables("foo")));
+        assertThat(selectVariables("select x.foo, y.bar from bar x, baz y"), is(variables("foo", "bar")));
+    }
+
+    @Test
+    public void parseSelectVariablesWithDuplicateNames() {
+        assertThat(selectVariables("select x.foo, y.foo from bar x, baz y"), is(variables("foo", "foo")));
+    }
+
+    @Test
+    public void parseSelectVariablesAliased() {
+        assertThat(selectVariables("select foo as f, bar as b from bar"), is(variables("f", "b")));
+        assertThat(selectVariables("select foo f, bar b from bar"), is(variables("f", "b")));
+        assertThat(selectVariables("select x.foo as xFoo, y.foo as yFoo from bar x, baz y"), is(variables("xFoo", "yFoo")));
+    }
+
+    @Test
+    public void parseSelectConstants() {
+        assertThat(selectVariables("select 42, 'foo' from bar"), is(variables("42", "'foo'")));
+        assertThat(selectVariables("select 42 x, 'foo' y from bar"), is(variables("x", "y")));
+    }
+
+    @Test
+    public void parseSelectStar() {
+        assertThat(selectVariables("select * from bar"), is(variables("*")));
+    }
+
+    @Test
+    public void selectVariablesIgnoresDistinct() {
+        assertThat(selectVariables("select distinct x, y, z from bar"), is(variables("x", "y", "z")));
+        assertThat(selectVariables("select distinct on (foo, bar) x, y, z from bar"), is(variables("x", "y", "z")));
+    }
+
+    @Test
+    public void selectVariablesIgnoresAll() {
+        assertThat(selectVariables("select all x, y, z from foo"), is(variables("x", "y", "z")));
+    }
+
+    @NotNull
+    private static Matcher<List<String>> variables(@NotNull String... variables) {
+        return is(asList(variables));
     }
 }
