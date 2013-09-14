@@ -31,14 +31,15 @@ import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethodCallExpression;
 import org.jetbrains.annotations.NotNull;
 
-import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.dalesbredFindMethodCall;
-import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.dalesbredSqlQueryMethodCall;
+import static com.intellij.patterns.PsiJavaPatterns.psiExpression;
+import static com.intellij.patterns.StandardPatterns.or;
+import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.*;
 import static fi.evident.dalesbred.plugin.idea.utils.ExpressionUtils.resolveQueryString;
 import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.countQueryParametersPlaceholders;
 
 public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalInspectionTool {
 
-    private static final PsiMethodCallPattern FIND_METHOD_CALL = dalesbredFindMethodCall();
+    private static final PsiMethodCallPattern FIND_METHOD_CALL = psiExpression().methodCall(or(dalesbredFindMethod(), dalesbredExecuteQueryMethod()));
     private static final PsiMethodCallPattern SQL_QUERY_METHOD_CALL = dalesbredSqlQueryMethodCall();
 
     @NotNull
@@ -50,11 +51,14 @@ public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalIns
             public void visitMethodCallExpression(PsiMethodCallExpression expression) {
                 if (FIND_METHOD_CALL.accepts(expression)) {
                     String methodName = expression.getMethodExpression().getReferenceName();
+                    if (methodName == null)
+                        return;
+
                     PsiExpression[] parameters = expression.getArgumentList().getExpressions();
 
-                    if ("findMap".equals(methodName)) {
+                    if (methodName.equals("findMap")) {
                         verifyQueryParameterCount(parameters, 2, holder);
-                    } else if ("findTable".equals(methodName) || "findUniqueInt".equals(methodName) || "findUniqueLong".equals(methodName)) {
+                    } else if (methodName.equals("findTable") || methodName.equals("findUniqueInt") || methodName.equals("findUniqueLong")) {
                         verifyQueryParameterCount(parameters, 0, holder);
                     } else {
                         verifyQueryParameterCount(parameters, 1, holder);

@@ -1,4 +1,5 @@
 import fi.evident.dalesbred.Database;
+import fi.evident.dalesbred.results.ResultSetProcessor;
 import fi.evident.dalesbred.results.RowMapper;
 
 import java.lang.Integer;
@@ -8,6 +9,7 @@ public class SimpleCases {
 
     Database db;
     RowMapper rowMapper;
+    ResultSetProcessor resultSetProcessor;
 
     public void rightAmountOfParameters() {
         db.findAll(Integer.class, "select 42 from foo");
@@ -78,5 +80,11 @@ public class SimpleCases {
         db.findTable("select * from foo where id=?", 4);
         db.findTable(<warning>"select * from foo where id=?"</warning>);
         db.findTable(<warning>"select * from foo where id=?"</warning>, 4, 4);
+    }
+
+    public void executeQuery() {
+        db.executeQuery(resultSetProcessor, "select * from foo where id=?", 4);
+        db.executeQuery(resultSetProcessor, <warning>"select * from foo where id=?"</warning>);
+        db.executeQuery(resultSetProcessor, <warning>"select * from foo where id=?"</warning>, 4, 4);
     }
 }

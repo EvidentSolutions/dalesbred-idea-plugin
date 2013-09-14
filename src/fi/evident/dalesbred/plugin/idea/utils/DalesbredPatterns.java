@@ -61,6 +61,11 @@ public final class DalesbredPatterns {
     }
 
     @NotNull
+    public static PsiMethodPattern dalesbredExecuteQueryMethod() {
+        return psiMethod().definedInClass(databaseClass()).withName(string().oneOf("executeQuery"));
+    }
+
+    @NotNull
     public static PsiMethodCallPattern dalesbredFindMethodCall() {
         return psiExpression().methodCall(dalesbredFindMethod());
     }
