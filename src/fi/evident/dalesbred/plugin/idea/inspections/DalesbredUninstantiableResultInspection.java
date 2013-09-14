@@ -73,25 +73,29 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
             if (allowedTypes.contains(cl.getQualifiedName()))
                 return;
 
-            String error = findErrorForType(cl);
-            if (error != null)
-                holder.registerProblem(parameter, error);
+            if (isUninstantiable(cl))
+                holder.registerProblem(parameter, "Class is not instantiable.");
         }
     }
 
-    @Nullable
-    private static String findErrorForType(@NotNull PsiClass cl) {
-        if (cl.isAnnotationType()) {
-            return "Class may not be an annotation type.";
+    private static boolean isUninstantiable(@NotNull PsiClass cl) {
+        return cl.isAnnotationType()
+            || cl.isInterface()
+            || isNonStaticInnerClass(cl)
+            || cl.hasModifierProperty(PsiModifier.ABSTRACT)
+            || allConstructorsAreInaccessible(cl);
+    }
 
-        } else if (cl.isInterface()) {
-            return "Class may not be an interface.";
+    private static boolean allConstructorsAreInaccessible(@NotNull PsiClass cl) {
+        PsiMethod[] constructors = cl.getConstructors();
+        if (constructors.length == 0)
+            return false;
 
-        } else if (isNonStaticInnerClass(cl)) {
-            return "Class may not be a non-static inner class.";
-        } else {
-            return null;
-        }
+        for (PsiMethod ctor : constructors)
+            if (ctor.hasModifierProperty(PsiModifier.PUBLIC))
+                return false;
+
+        return true;
     }
 
     private static boolean isNonStaticInnerClass(@NotNull PsiClass cl) {
