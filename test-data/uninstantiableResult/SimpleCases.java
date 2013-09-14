@@ -1,5 +1,7 @@
 import fi.evident.dalesbred.Database;
 
+import java.lang.String;
+
 public class SimpleCases {
 
     Database db;
@@ -25,7 +27,7 @@ public class SimpleCases {
     }
 
     public void selectListWithStar() {
-        db.findAll(<warning descr="Can't verify construction when select list contains '*'.">String.class</warning>, "select * from foo");
+        db.findAll(String.class, <warning descr="Can't verify construction when select list contains '*'.">"select * from foo"</warning>);
     }
 
     public class NonStaticInnerClass { }

@@ -36,4 +36,10 @@ public class DalesbredUninstantiableResultInspectionTest extends InspectionTestC
 
         myFixture.testHighlighting("uninstantiableResult/ConstructorValidation.java");
     }
+
+    public void testMapConstruction() {
+        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
+
+        myFixture.testHighlighting("uninstantiableResult/MapConstruction.java");
+    }
 }

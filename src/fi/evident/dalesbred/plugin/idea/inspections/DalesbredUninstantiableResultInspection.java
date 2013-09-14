@@ -60,40 +60,53 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
                     PsiExpression[] parameters = expression.getArgumentList().getExpressions();
 
                     if ("findMap".equals(methodName)) {
-                        verifyParameterIsInstantiable(parameters[0], holder);
-                        verifyParameterIsInstantiable(parameters[1], holder);
-                        // TODO: verify that select-list contains exactly two values
+                        verifyFindMap(parameters, holder);
                     } else {
-                        PsiClass resultType = resolveType(parameters[0]);
-                        if (resultType != null && !allowedTypes.contains(resultType.getQualifiedName())) {
-                            if (isUninstantiable(resultType))
-                                holder.registerProblem(parameters[0], "Class is not instantiable.");
-                            else {
-                                String error = verifySelectListMatchesResultType(resultType, parameters[1]);
-                                if (error != null)
-                                    holder.registerProblem(parameters[0], error);
-                            }
-
-                        }
+                        verifyFind(parameters, holder);
                     }
                 }
             }
         };
     }
 
-    @Nullable
-    private static String verifySelectListMatchesResultType(@NotNull PsiClass resultType, @NotNull PsiExpression sqlParameter) {
-        String sql = resolveQueryString(sqlParameter);
-        if (sql != null) {
-            if (sql.contains("*"))
-                return "Can't verify construction when select list contains '*'.";
+    private void verifyFind(@NotNull PsiExpression[] parameters, @NotNull ProblemsHolder holder) {
+        PsiClass resultType = resolveType(parameters[0]);
+        if (resultType != null && !allowedTypes.contains(resultType.getQualifiedName())) {
+            if (isUninstantiable(resultType))
+                holder.registerProblem(parameters[0], "Class is not instantiable.");
+            else {
+                String sql = resolveQueryString(parameters[1]);
+                if (sql != null) {
+                    List<String> selectItems = SqlUtils.selectVariables(sql);
 
-            List<String> selectItems = SqlUtils.selectVariables(sql);
+                    if (selectItems.contains("*"))
+                        holder.registerProblem(parameters[1], "Can't verify construction when select list contains '*'.");
 
-            if (!hasMatchingConstructor(resultType, selectItems))
-                return "Could not find a way to construct class with selected values.";
+                    if (!hasMatchingConstructor(resultType, selectItems))
+                        holder.registerProblem(parameters[0], "Could not find a way to construct class with selected values.");
+                }
+            }
         }
-        return null;
+    }
+
+    private void verifyFindMap(@NotNull PsiExpression[] parameters, @NotNull ProblemsHolder holder) {
+        verifyParameterIsInstantiable(parameters[0], holder);
+        verifyParameterIsInstantiable(parameters[1], holder);
+
+        String sql = resolveQueryString(parameters[2]);
+        if (sql != null) {
+            List<String> selectItems = SqlUtils.selectVariables(sql);
+            if (selectItems.contains("*"))
+                holder.registerProblem(parameters[2], "Can't verify construction when select list contains '*'.");
+            else if (selectItems.size() != 2)
+                holder.registerProblem(parameters[2], "Select should return exactly 2 columns.");
+        }
+    }
+
+    private void verifyParameterIsInstantiable(@NotNull PsiExpression parameter, @NotNull ProblemsHolder holder) {
+        PsiClass cl = resolveType(parameter);
+        if (cl != null && !allowedTypes.contains(cl.getQualifiedName()) && isUninstantiable(cl))
+            holder.registerProblem(parameter, "Class is not instantiable.");
     }
 
     private static boolean hasMatchingConstructor(@NotNull PsiClass type, @NotNull List<String> selectItems) {
@@ -128,12 +141,6 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
         return field != null && field.hasModifierProperty(PsiModifier.PUBLIC)
             || PropertyUtil.findPropertySetter(type, property, false, true) != null;
 
-    }
-
-    private void verifyParameterIsInstantiable(@NotNull PsiExpression parameter, @NotNull ProblemsHolder holder) {
-        PsiClass cl = resolveType(parameter);
-        if (cl != null && !allowedTypes.contains(cl.getQualifiedName()) && isUninstantiable(cl))
-            holder.registerProblem(parameter, "Class is not instantiable.");
     }
 
     private static boolean isUninstantiable(@NotNull PsiClass cl) {
