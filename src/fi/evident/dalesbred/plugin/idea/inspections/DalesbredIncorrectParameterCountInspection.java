@@ -52,10 +52,13 @@ public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalIns
                     String methodName = expression.getMethodExpression().getReferenceName();
                     PsiExpression[] parameters = expression.getArgumentList().getExpressions();
 
-                    if ("findMap".equals(methodName))
+                    if ("findMap".equals(methodName)) {
                         verifyQueryParameterCount(parameters, 2, holder);
-                    else
+                    } else if ("findTable".equals(methodName) || "findUniqueInt".equals(methodName) || "findUniqueLong".equals(methodName)) {
+                        verifyQueryParameterCount(parameters, 0, holder);
+                    } else {
                         verifyQueryParameterCount(parameters, 1, holder);
+                    }
 
                 } else if (SQL_QUERY_METHOD_CALL.accepts(expression)) {
                     PsiExpression[] parameters = expression.getArgumentList().getExpressions();

@@ -59,6 +59,8 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
 
                     if ("findMap".equals(methodName)) {
                         verifyFindMap(parameters, holder);
+                    } else if ("findTable".equals(methodName) || "findUniqueInt".equals(methodName) || "findUniqueLong".equals(methodName)) {
+                        // Nothing
                     } else {
                         verifyFind(parameters, holder);
                     }

@@ -61,4 +61,22 @@ public class SimpleCases {
         db.findUniqueOrNull(rowMapper, <warning>"select a from foo where id=?"</warning>);
         db.findUniqueOrNull(rowMapper, <warning>"select a from foo where id=?"</warning>, 4, 4);
     }
+
+    public void findUniqueInt() {
+        db.findUniqueInt("select a from foo where id=?", 4);
+        db.findUniqueInt(<warning>"select a from foo where id=?"</warning>);
+        db.findUniqueInt(<warning>"select a from foo where id=?"</warning>, 4, 4);
+    }
+
+    public void findUniqueLong() {
+        db.findUniqueLong("select a from foo where id=?", 4);
+        db.findUniqueLong(<warning>"select a from foo where id=?"</warning>);
+        db.findUniqueLong(<warning>"select a from foo where id=?"</warning>, 4, 4);
+    }
+
+    public void findTable() {
+        db.findTable("select * from foo where id=?", 4);
+        db.findTable(<warning>"select * from foo where id=?"</warning>);
+        db.findTable(<warning>"select * from foo where id=?"</warning>, 4, 4);
+    }
 }

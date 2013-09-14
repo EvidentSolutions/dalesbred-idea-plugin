@@ -57,7 +57,7 @@ public final class DalesbredPatterns {
 
     @NotNull
     public static PsiMethodPattern dalesbredFindMethod() {
-        return psiMethod().definedInClass(databaseClass()).withName(string().oneOf("findUnique", "findAll", "findUniqueOrNull", "findMap"));
+        return psiMethod().definedInClass(databaseClass()).withName(string().oneOf("findUnique", "findAll", "findUniqueOrNull", "findMap", "findTable", "findUniqueInt", "findUniqueLong"));
     }
 
     @NotNull
