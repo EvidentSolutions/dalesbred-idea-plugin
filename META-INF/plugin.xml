@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin version="2" url="https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
     <version>0.0.2</version>
