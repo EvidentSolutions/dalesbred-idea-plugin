@@ -59,14 +59,30 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
 
                     if ("findMap".equals(methodName)) {
                         verifyFindMap(parameters, holder);
-                    } else if ("findTable".equals(methodName) || "findUniqueInt".equals(methodName) || "findUniqueLong".equals(methodName)) {
+                    } else if ("findTable".equals(methodName)) {
                         // Nothing
+                    } else if ("findUniqueInt".equals(methodName) || "findUniqueLong".equals(methodName)) {
+                        verifyUniquePrimitive(parameters, holder);
                     } else {
                         verifyFind(parameters, holder);
                     }
                 }
             }
         };
+    }
+
+    private static void verifyUniquePrimitive(@NotNull PsiExpression[] parameters, @NotNull ProblemsHolder holder) {
+        if (parameters.length == 0) return;
+
+        String sql = resolveQueryString(parameters[0]);
+        if (sql != null) {
+            List<String> selectItems = selectVariables(sql);
+
+            if (selectItems.contains("*"))
+                holder.registerProblem(parameters[0], "Can't verify construction when select list contains '*'.");
+            else if (selectItems.size() != 1)
+                holder.registerProblem(parameters[0], "Expected 1 column in result set, but got " + selectItems.size() + '.');
+        }
     }
 
     private void verifyFind(@NotNull PsiExpression[] parameters, @NotNull ProblemsHolder holder) {
