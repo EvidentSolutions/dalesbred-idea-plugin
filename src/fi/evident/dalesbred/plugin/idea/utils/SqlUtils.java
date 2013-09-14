@@ -58,7 +58,8 @@ public final class SqlUtils {
     @NotNull
     private static String parseSelectItem(@NotNull String selectItem) {
         Matcher matcher = SELECT_ITEM_PATTERN.matcher(selectItem);
-        assert matcher.matches();
+        if (!matcher.matches())
+            throw new IllegalArgumentException("no match for selectItem '" + selectItem + '\'');
 
         if (matcher.group(5) != null)
             return matcher.group(5);

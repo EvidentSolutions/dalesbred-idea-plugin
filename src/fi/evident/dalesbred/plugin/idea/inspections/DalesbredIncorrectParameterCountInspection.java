@@ -30,11 +30,10 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethodCallExpression;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.psi.impl.JavaConstantExpressionEvaluator.computeConstantExpression;
 import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.dalesbredFindMethodCall;
 import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.dalesbredSqlQueryMethodCall;
+import static fi.evident.dalesbred.plugin.idea.utils.ExpressionUtils.resolveQueryString;
 import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.countQueryParametersPlaceholders;
 
 public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalInspectionTool {
@@ -78,11 +77,5 @@ public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalIns
             if (actual != expected)
                 holder.registerProblem(queryParameter, "Expected " + expected + " query parameters, but got " + actual + '.');
         }
-    }
-
-    @Nullable
-    private static String resolveQueryString(@NotNull PsiExpression parameter) {
-        Object value = computeConstantExpression(parameter, false);
-        return (value instanceof String) ? (String) value : null;
     }
 }

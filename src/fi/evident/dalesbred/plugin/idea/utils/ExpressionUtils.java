@@ -20,20 +20,22 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea.inspections;
+package fi.evident.dalesbred.plugin.idea.utils;
 
-@SuppressWarnings({"JUnitTestMethodWithNoAssertions", "unchecked"})
-public class DalesbredUninstantiableResultInspectionTest extends InspectionTestCase {
+import com.intellij.psi.PsiExpression;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-    public void testSimpleCases() {
-        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
+import static com.intellij.psi.impl.JavaConstantExpressionEvaluator.computeConstantExpression;
 
-        myFixture.testHighlighting("uninstantiableResult/SimpleCases.java");
+public final class ExpressionUtils {
+
+    private ExpressionUtils() {
     }
 
-    public void testConstructorValidation() {
-        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
-
-        myFixture.testHighlighting("uninstantiableResult/ConstructorValidation.java");
+    @Nullable
+    public static String resolveQueryString(@NotNull PsiExpression parameter) {
+        Object value = computeConstantExpression(parameter, false);
+        return (value instanceof String) ? (String) value : null;
     }
 }

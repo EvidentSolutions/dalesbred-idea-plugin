@@ -24,11 +24,6 @@ public class SimpleCases {
         db.findAll(<warning descr="Class is not instantiable.">MyClassWithPrivateConstructor.class</warning>, "select 42 from foo");
     }
 
-    public void validConstructors() {
-        db.findAll(MyClassWithDefaultConstructor.class, "select 42 from foo");
-        db.findAll(MyClassWithPublicConstructor.class, "select 42 from foo");
-    }
-
     public class NonStaticInnerClass { }
 }
 
@@ -40,10 +35,4 @@ abstract class MyAbstractClass { }
 
 class MyClassWithPrivateConstructor {
     private MyClassWithPrivateConstructor() { }
-}
-
-class MyClassWithDefaultConstructor { }
-
-class MyClassWithPublicConstructor {
-    public MyClassWithPublicConstructor() { }
 }

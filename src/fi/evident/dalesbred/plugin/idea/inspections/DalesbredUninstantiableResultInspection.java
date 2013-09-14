@@ -26,6 +26,8 @@ import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.patterns.PsiMethodCallPattern;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PropertyUtil;
+import fi.evident.dalesbred.plugin.idea.utils.SqlUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +39,7 @@ import java.util.List;
 
 import static fi.evident.dalesbred.plugin.idea.ui.ClassList.createClassesListControl;
 import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.dalesbredFindMethodCall;
+import static fi.evident.dalesbred.plugin.idea.utils.ExpressionUtils.resolveQueryString;
 
 public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspectionTool {
 
@@ -59,31 +62,83 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
                     if ("findMap".equals(methodName)) {
                         verifyParameterIsInstantiable(parameters[0], holder);
                         verifyParameterIsInstantiable(parameters[1], holder);
+                        // TODO: verify that select-list contains exactly two values
                     } else {
-                        verifyParameterIsInstantiable(parameters[0], holder);
+                        PsiClass resultType = resolveType(parameters[0]);
+                        if (resultType != null && !allowedTypes.contains(resultType.getQualifiedName())) {
+                            if (isUninstantiable(resultType))
+                                holder.registerProblem(parameters[0], "Class is not instantiable.");
+                            else {
+                                String error = verifySelectListMatchesResultType(resultType, parameters[1]);
+                                if (error != null)
+                                    holder.registerProblem(parameters[0], error);
+                            }
+
+                        }
                     }
                 }
             }
         };
     }
 
+    @Nullable
+    private static String verifySelectListMatchesResultType(@NotNull PsiClass resultType, @NotNull PsiExpression sqlParameter) {
+        String sql = resolveQueryString(sqlParameter);
+        if (sql != null) {
+            List<String> selectItems = SqlUtils.selectVariables(sql);
+
+            if (!hasMatchingConstructor(resultType, selectItems))
+                return "Could not find a way to construct class with selected values.";
+        }
+        return null;
+    }
+
+    private static boolean hasMatchingConstructor(@NotNull PsiClass type, @NotNull List<String> selectItems) {
+        int selectCount = selectItems.size();
+
+        PsiMethod[] constructors = type.getConstructors();
+        if (constructors.length != 0) {
+            for (PsiMethod ctor : constructors) {
+                if (ctor.hasModifierProperty(PsiModifier.PUBLIC)) {
+                    int parameterCount = ctor.getParameterList().getParametersCount();
+                    if (parameterCount == selectCount || (parameterCount < selectCount && hasPublicAccessorsForProperties(type, selectItems.subList(parameterCount, selectCount))))
+                        return true;
+                }
+            }
+            return false;
+        } else {
+            return hasPublicAccessorsForProperties(type, selectItems);
+        }
+    }
+
+    private static boolean hasPublicAccessorsForProperties(@NotNull PsiClass type, @NonNls List<String> properties) {
+        for (String property : properties)
+            if (!hasPublicAccessorForProperty(type, property))
+                return false;
+
+        return true;
+    }
+
+    private static boolean hasPublicAccessorForProperty(@NotNull PsiClass type, @NotNull String property) {
+        PsiField field = type.findFieldByName(property, true);
+
+        return field != null && field.hasModifierProperty(PsiModifier.PUBLIC)
+            || PropertyUtil.findPropertySetter(type, property, false, true) != null;
+
+    }
+
     private void verifyParameterIsInstantiable(@NotNull PsiExpression parameter, @NotNull ProblemsHolder holder) {
         PsiClass cl = resolveType(parameter);
-        if (cl != null) {
-            if (allowedTypes.contains(cl.getQualifiedName()))
-                return;
-
-            if (isUninstantiable(cl))
-                holder.registerProblem(parameter, "Class is not instantiable.");
-        }
+        if (cl != null && !allowedTypes.contains(cl.getQualifiedName()) && isUninstantiable(cl))
+            holder.registerProblem(parameter, "Class is not instantiable.");
     }
 
     private static boolean isUninstantiable(@NotNull PsiClass cl) {
         return cl.isAnnotationType()
-            || cl.isInterface()
-            || isNonStaticInnerClass(cl)
-            || cl.hasModifierProperty(PsiModifier.ABSTRACT)
-            || allConstructorsAreInaccessible(cl);
+                || cl.isInterface()
+                || isNonStaticInnerClass(cl)
+                || cl.hasModifierProperty(PsiModifier.ABSTRACT)
+                || allConstructorsAreInaccessible(cl);
     }
 
     private static boolean allConstructorsAreInaccessible(@NotNull PsiClass cl) {
