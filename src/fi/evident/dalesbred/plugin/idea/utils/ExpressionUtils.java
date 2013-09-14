@@ -22,9 +22,13 @@
 
 package fi.evident.dalesbred.plugin.idea.utils;
 
-import com.intellij.psi.PsiExpression;
+import com.intellij.psi.*;
+import com.intellij.psi.util.PropertyUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static com.intellij.psi.impl.JavaConstantExpressionEvaluator.computeConstantExpression;
 
@@ -37,5 +41,71 @@ public final class ExpressionUtils {
     public static String resolveQueryString(@NotNull PsiExpression parameter) {
         Object value = computeConstantExpression(parameter, false);
         return (value instanceof String) ? (String) value : null;
+    }
+
+    public static boolean isUninstantiable(@NotNull PsiClass cl) {
+        return cl.isAnnotationType()
+                || cl.isInterface()
+                || isNonStaticInnerClass(cl)
+                || cl.hasModifierProperty(PsiModifier.ABSTRACT)
+                || allConstructorsAreInaccessible(cl);
+    }
+
+    private static boolean allConstructorsAreInaccessible(@NotNull PsiClass cl) {
+        PsiMethod[] constructors = cl.getConstructors();
+        if (constructors.length == 0)
+            return false;
+
+        for (PsiMethod ctor : constructors)
+            if (ctor.hasModifierProperty(PsiModifier.PUBLIC))
+                return false;
+
+        return true;
+    }
+
+    public static boolean isNonStaticInnerClass(@NotNull PsiClass cl) {
+        if (cl.getContainingClass() == null) return false;
+
+        PsiModifierList modifiers = cl.getModifierList();
+        return modifiers == null || !modifiers.hasModifierProperty(PsiModifier.STATIC);
+    }
+
+    public static boolean hasPublicAccessorsForProperties(@NotNull PsiClass type, @NonNls List<String> properties) {
+        for (String property : properties)
+            if (!hasPublicAccessorForProperty(type, property))
+                return false;
+
+        return true;
+    }
+
+    public static boolean hasPublicAccessorForProperty(@NotNull PsiClass type, @NotNull String property) {
+        PsiField field = type.findFieldByName(property, true);
+
+        return field != null && field.hasModifierProperty(PsiModifier.PUBLIC)
+                || PropertyUtil.findPropertySetter(type, property, false, true) != null;
+
+    }
+
+    @Nullable
+    public static PsiClass resolveType(@NotNull PsiExpression root) {
+        PsiExpression exp = root;
+        while (true) {
+            if (exp instanceof PsiClassObjectAccessExpression) {
+                PsiType type = ((PsiClassObjectAccessExpression) exp).getOperand().getType();
+                if (type instanceof PsiClassType)
+                    return ((PsiClassType) type).resolve();
+
+            } else if (exp instanceof PsiReferenceExpression) {
+                PsiElement resolved = ((PsiReference) exp).resolve();
+                if (resolved instanceof PsiVariable) {
+                    PsiExpression initializer = ((PsiVariable) resolved).getInitializer();
+                    if (initializer != null)
+                        exp = initializer;
+                }
+
+            } else {
+                return null;
+            }
+        }
     }
 }

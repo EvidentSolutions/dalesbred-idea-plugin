@@ -26,11 +26,8 @@ import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.patterns.PsiMethodCallPattern;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PropertyUtil;
-import fi.evident.dalesbred.plugin.idea.utils.SqlUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +36,8 @@ import java.util.List;
 
 import static fi.evident.dalesbred.plugin.idea.ui.ClassList.createClassesListControl;
 import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.dalesbredFindMethodCall;
-import static fi.evident.dalesbred.plugin.idea.utils.ExpressionUtils.resolveQueryString;
+import static fi.evident.dalesbred.plugin.idea.utils.ExpressionUtils.*;
+import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.selectVariables;
 
 public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspectionTool {
 
@@ -77,12 +75,11 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
             else {
                 String sql = resolveQueryString(parameters[1]);
                 if (sql != null) {
-                    List<String> selectItems = SqlUtils.selectVariables(sql);
+                    List<String> selectItems = selectVariables(sql);
 
                     if (selectItems.contains("*"))
                         holder.registerProblem(parameters[1], "Can't verify construction when select list contains '*'.");
-
-                    if (!hasMatchingConstructor(resultType, selectItems))
+                    else if (!hasMatchingConstructor(resultType, selectItems))
                         holder.registerProblem(parameters[0], "Could not find a way to construct class with selected values.");
                 }
             }
@@ -95,7 +92,7 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
 
         String sql = resolveQueryString(parameters[2]);
         if (sql != null) {
-            List<String> selectItems = SqlUtils.selectVariables(sql);
+            List<String> selectItems = selectVariables(sql);
             if (selectItems.contains("*"))
                 holder.registerProblem(parameters[2], "Can't verify construction when select list contains '*'.");
             else if (selectItems.size() != 2)
@@ -124,72 +121,6 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
             return false;
         } else {
             return hasPublicAccessorsForProperties(type, selectItems);
-        }
-    }
-
-    private static boolean hasPublicAccessorsForProperties(@NotNull PsiClass type, @NonNls List<String> properties) {
-        for (String property : properties)
-            if (!hasPublicAccessorForProperty(type, property))
-                return false;
-
-        return true;
-    }
-
-    private static boolean hasPublicAccessorForProperty(@NotNull PsiClass type, @NotNull String property) {
-        PsiField field = type.findFieldByName(property, true);
-
-        return field != null && field.hasModifierProperty(PsiModifier.PUBLIC)
-            || PropertyUtil.findPropertySetter(type, property, false, true) != null;
-
-    }
-
-    private static boolean isUninstantiable(@NotNull PsiClass cl) {
-        return cl.isAnnotationType()
-                || cl.isInterface()
-                || isNonStaticInnerClass(cl)
-                || cl.hasModifierProperty(PsiModifier.ABSTRACT)
-                || allConstructorsAreInaccessible(cl);
-    }
-
-    private static boolean allConstructorsAreInaccessible(@NotNull PsiClass cl) {
-        PsiMethod[] constructors = cl.getConstructors();
-        if (constructors.length == 0)
-            return false;
-
-        for (PsiMethod ctor : constructors)
-            if (ctor.hasModifierProperty(PsiModifier.PUBLIC))
-                return false;
-
-        return true;
-    }
-
-    private static boolean isNonStaticInnerClass(@NotNull PsiClass cl) {
-        if (cl.getContainingClass() == null) return false;
-
-        PsiModifierList modifiers = cl.getModifierList();
-        return modifiers == null || !modifiers.hasModifierProperty(PsiModifier.STATIC);
-    }
-
-    @Nullable
-    private static PsiClass resolveType(@NotNull PsiExpression root) {
-        PsiExpression exp = root;
-        while (true) {
-            if (exp instanceof PsiClassObjectAccessExpression) {
-                PsiType type = ((PsiClassObjectAccessExpression) exp).getOperand().getType();
-                if (type instanceof PsiClassType)
-                    return ((PsiClassType) type).resolve();
-
-            } else if (exp instanceof PsiReferenceExpression) {
-                PsiElement resolved = ((PsiReference) exp).resolve();
-                if (resolved instanceof PsiVariable) {
-                    PsiExpression initializer = ((PsiVariable) resolved).getInitializer();
-                    if (initializer != null)
-                        exp = initializer;
-                }
-
-            } else {
-                return null;
-            }
         }
     }
 
