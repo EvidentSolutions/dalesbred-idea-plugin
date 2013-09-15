@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
-    <version>0.0.3-dev</version>
+    <version>0.0.3</version>
     <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
 
     <description><![CDATA[
@@ -9,7 +9,7 @@
       ]]></description>
 
     <change-notes><![CDATA[
-      More thorough instantiation inspections.
+      More inspections.
       ]]>
     </change-notes>
 
