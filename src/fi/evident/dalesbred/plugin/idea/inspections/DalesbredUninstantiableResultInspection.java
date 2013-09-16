@@ -86,6 +86,8 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
     }
 
     private void verifyFind(@NotNull PsiExpression[] parameters, @NotNull ProblemsHolder holder) {
+        if (parameters.length < 2) return;
+
         PsiClass resultType = resolveType(parameters[0]);
         if (resultType != null && !allowedTypes.contains(resultType.getQualifiedName())) {
             if (isUninstantiable(resultType))
@@ -105,6 +107,8 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
     }
 
     private void verifyFindMap(@NotNull PsiExpression[] parameters, @NotNull ProblemsHolder holder) {
+        if (parameters.length < 2) return;
+
         verifyParameterIsInstantiable(parameters[0], holder);
         verifyParameterIsInstantiable(parameters[1], holder);
 
