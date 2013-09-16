@@ -1,3 +1,7 @@
+## 0.0.4 (2013-09-16)
+
+  - Fixed ArrayIndexOutOfBoundsException when not enough parameters we passed.
+
 ## 0.0.3 (2013-09-15)
 
   - Cover more of Dalesbred's API in inspections.
