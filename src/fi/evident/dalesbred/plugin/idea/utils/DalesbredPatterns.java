@@ -22,51 +22,105 @@
 
 package fi.evident.dalesbred.plugin.idea.utils;
 
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PsiClassPattern;
-import com.intellij.patterns.PsiMethodCallPattern;
 import com.intellij.patterns.PsiMethodPattern;
+import com.intellij.patterns.StringPattern;
+import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.patterns.PsiJavaPatterns.*;
-import static com.intellij.patterns.StandardPatterns.string;
 
 public final class DalesbredPatterns {
+
+    private static final String CLASS_CLASS_NAME = "java.lang.Class";
+    private static final String STRING_CLASS_NAME = "java.lang.String";
+    private static final String OBJECT_ARGS_CLASS_NAME = "java.lang.Object...";
+    private static final String DATABASE_CLASS_NAME = "fi.evident.dalesbred.Database";
+    private static final String SQL_QUERY_CLASS_NAME = "fi.evident.dalesbred.SqlQuery";
+    private static final String ROW_MAPPER_CLASS_NAME = "fi.evident.dalesbred.results.RowMapper";
+    private static final String RESULT_SET_PROCESSOR_CLASS_NAME = "fi.evident.dalesbred.results.ResultSetProcessor";
 
     private DalesbredPatterns() {
     }
 
     @NotNull
     public static PsiClassPattern databaseClass() {
-        return psiClass().withQualifiedName("fi.evident.dalesbred.Database");
+        return psiClass().withQualifiedName(DATABASE_CLASS_NAME);
     }
 
     @NotNull
     public static PsiClassPattern sqlQueryClass() {
-        return psiClass().withQualifiedName("fi.evident.dalesbred.SqlQuery");
+        return psiClass().withQualifiedName(SQL_QUERY_CLASS_NAME);
     }
 
     @NotNull
-    public static PsiMethodCallPattern dalesbredSqlQueryMethodCall() {
-        return psiExpression().methodCall(dalesbredSqlQueryMethod());
+    @SuppressWarnings("unchecked")
+    public static ElementPattern<PsiMethod> findMethod() {
+        return or(findTableMethod(), findUniqueMethod(), findUniquePrimitiveMethod(), findAllMethod(), findMapMethod());
     }
 
     @NotNull
-    public static PsiMethodPattern dalesbredSqlQueryMethod() {
-        return psiMethod().definedInClass(sqlQueryClass()).withName("query").withParameters("java.lang.String", "java.lang.Object[]");
+    public static ElementPattern<PsiMethod> sqlQueryMethod() {
+        return psiMethod().definedInClass(sqlQueryClass()).withName("query").withParameters(STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME);
     }
 
     @NotNull
-    public static PsiMethodPattern dalesbredFindMethod() {
-        return psiMethod().definedInClass(databaseClass()).withName(string().oneOf("findUnique", "findAll", "findUniqueOrNull", "findMap", "findTable", "findUniqueInt", "findUniqueLong"));
+    private static ElementPattern<PsiMethod> findUniqueMethod() {
+        StringPattern namePattern = string().oneOf("findUnique", "findUniqueOrNull");
+        return or(
+                databaseMethod(namePattern).withParameters(CLASS_CLASS_NAME, STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod(namePattern).withParameters(CLASS_CLASS_NAME, SQL_QUERY_CLASS_NAME),
+                databaseMethod(namePattern).withParameters(ROW_MAPPER_CLASS_NAME, STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod(namePattern).withParameters(ROW_MAPPER_CLASS_NAME, SQL_QUERY_CLASS_NAME));
     }
 
     @NotNull
-    public static PsiMethodPattern dalesbredExecuteQueryMethod() {
-        return psiMethod().definedInClass(databaseClass()).withName(string().oneOf("executeQuery"));
+    private static ElementPattern<PsiMethod> findUniquePrimitiveMethod() {
+        StringPattern namePattern = string().oneOf("findUniqueInt", "findUniqueLong");
+        return or(
+                databaseMethod(namePattern).withParameters(STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod(namePattern).withParameters(SQL_QUERY_CLASS_NAME));
     }
 
     @NotNull
-    public static PsiMethodCallPattern dalesbredFindMethodCall() {
-        return psiExpression().methodCall(dalesbredFindMethod());
+    private static ElementPattern<PsiMethod> findMapMethod() {
+        return or(
+                databaseMethod("findMap").withParameters(CLASS_CLASS_NAME, CLASS_CLASS_NAME, STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod("findMap").withParameters(CLASS_CLASS_NAME, CLASS_CLASS_NAME, SQL_QUERY_CLASS_NAME));
+    }
+
+    @NotNull
+    private static ElementPattern<PsiMethod> findAllMethod() {
+
+        return or(
+                databaseMethod("findAll").withParameters(CLASS_CLASS_NAME, STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod("findAll").withParameters(CLASS_CLASS_NAME, SQL_QUERY_CLASS_NAME),
+                databaseMethod("findAll").withParameters(ROW_MAPPER_CLASS_NAME, STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod("findAll").withParameters(ROW_MAPPER_CLASS_NAME, SQL_QUERY_CLASS_NAME));
+    }
+
+    @NotNull
+    private static ElementPattern<PsiMethod> findTableMethod() {
+        return or(
+                databaseMethod("findTable").withParameters(STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod("findTable").withParameters(SQL_QUERY_CLASS_NAME));
+    }
+
+    @NotNull
+    public static ElementPattern<PsiMethod> executeQueryMethod() {
+        return or(
+                databaseMethod("executeQuery").withParameters(RESULT_SET_PROCESSOR_CLASS_NAME, STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod("executeQuery").withParameters(RESULT_SET_PROCESSOR_CLASS_NAME, SQL_QUERY_CLASS_NAME));
+    }
+
+    @NotNull
+    private static PsiMethodPattern databaseMethod(@NotNull String name) {
+        return databaseMethod(object(name));
+    }
+
+    @NotNull
+    private static PsiMethodPattern databaseMethod(@NotNull ElementPattern<String> name) {
+        return psiMethod().definedInClass(databaseClass()).withName(name);
     }
 }

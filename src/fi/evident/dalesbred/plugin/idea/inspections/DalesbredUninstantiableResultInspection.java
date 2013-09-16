@@ -26,6 +26,7 @@ import com.intellij.codeInspection.BaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.patterns.PsiMethodCallPattern;
 import com.intellij.psi.*;
+import fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,8 +35,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intellij.patterns.PsiJavaPatterns.psiExpression;
 import static fi.evident.dalesbred.plugin.idea.ui.ClassList.createClassesListControl;
-import static fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns.dalesbredFindMethodCall;
 import static fi.evident.dalesbred.plugin.idea.utils.ExpressionUtils.*;
 import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.selectVariables;
 
@@ -44,7 +45,7 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
     @NonNls
     public List<String> allowedTypes = new ArrayList<String>();
 
-    private static final PsiMethodCallPattern FIND_METHOD_CALL = dalesbredFindMethodCall();
+    private static final PsiMethodCallPattern FIND_METHOD_CALL = psiExpression().methodCall(DalesbredPatterns.findMethod());
 
     @NotNull
     @Override

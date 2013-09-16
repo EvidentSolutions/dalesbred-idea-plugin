@@ -39,8 +39,9 @@ import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.countQueryParamete
 
 public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalInspectionTool {
 
-    private static final PsiMethodCallPattern FIND_METHOD_CALL = psiExpression().methodCall(or(dalesbredFindMethod(), dalesbredExecuteQueryMethod()));
-    private static final PsiMethodCallPattern SQL_QUERY_METHOD_CALL = dalesbredSqlQueryMethodCall();
+    @SuppressWarnings("unchecked")
+    private static final PsiMethodCallPattern FIND_METHOD_CALL = psiExpression().methodCall(or(findMethod(), executeQueryMethod()));
+    private static final PsiMethodCallPattern SQL_QUERY_METHOD_CALL = psiExpression().methodCall(sqlQueryMethod());
 
     @NotNull
     @Override
