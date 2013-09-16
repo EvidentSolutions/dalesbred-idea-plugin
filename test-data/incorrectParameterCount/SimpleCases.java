@@ -1,4 +1,5 @@
 import fi.evident.dalesbred.Database;
+import fi.evident.dalesbred.SqlQuery;
 import fi.evident.dalesbred.results.ResultSetProcessor;
 import fi.evident.dalesbred.results.RowMapper;
 
@@ -86,5 +87,11 @@ public class SimpleCases {
         db.executeQuery(resultSetProcessor, "select * from foo where id=?", 4);
         db.executeQuery(resultSetProcessor, <warning>"select * from foo where id=?"</warning>);
         db.executeQuery(resultSetProcessor, <warning>"select * from foo where id=?"</warning>, 4, 4);
+    }
+
+    public void query() {
+        SqlQuery.query("select * from foo where id=?", 4);
+        SqlQuery.query(<warning>"select * from foo where id=?"</warning>);
+        SqlQuery.query(<warning>"select * from foo where id=?"</warning>, 4, 2);
     }
 }
