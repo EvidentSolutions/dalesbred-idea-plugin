@@ -108,7 +108,7 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
     }
 
     private void verifyFindMap(@NotNull PsiExpression[] parameters, @NotNull ProblemsHolder holder) {
-        if (parameters.length < 2) return;
+        if (parameters.length < 3) return;
 
         verifyParameterIsInstantiable(parameters[0], holder);
         verifyParameterIsInstantiable(parameters[1], holder);
