@@ -23,6 +23,7 @@
 package fi.evident.dalesbred.plugin.idea.utils;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +34,7 @@ import java.util.regex.Pattern;
 public final class SqlUtils {
 
     private static final Pattern SELECT_LIST_PATTERN = Pattern.compile("\\s*select\\s+((all|distinct(\\s+on\\s*(\\(.*?\\)))?)\\s+)?(.+?)\\s+from.+", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RETURNING_PATTERN = Pattern.compile(".+returning\\s+(.+)", Pattern.CASE_INSENSITIVE);
     private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(.+))?", Pattern.CASE_INSENSITIVE);
     private static final Pattern COMMA_SEP_PATTERN = Pattern.compile("\\s*,\\s*");
 
@@ -41,9 +43,9 @@ public final class SqlUtils {
 
     @NotNull
     public static List<String> selectVariables(@NotNull String sql) {
-        Matcher matcher = SELECT_LIST_PATTERN.matcher(sql);
-        if (matcher.matches()) {
-            String[] selectItems = COMMA_SEP_PATTERN.split(matcher.group(5));
+        String selectList = selectList(sql);
+        if (selectList != null) {
+            String[] selectItems = COMMA_SEP_PATTERN.split(selectList);
 
             List<String> result = new ArrayList<String>(selectItems.length);
             for (String selectItem : selectItems)
@@ -53,6 +55,19 @@ public final class SqlUtils {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    @Nullable
+    private static String selectList(@NotNull String sql) {
+        Matcher m1 = SELECT_LIST_PATTERN.matcher(sql);
+        if (m1.matches())
+            return m1.group(5);
+
+        Matcher m2 = RETURNING_PATTERN.matcher(sql);
+        if (m2.matches())
+            return m2.group(1);
+
+        return null;
     }
 
     @NotNull

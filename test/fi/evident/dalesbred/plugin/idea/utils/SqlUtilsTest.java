@@ -96,6 +96,21 @@ public class SqlUtilsTest {
         assertThat(selectVariables("select all x, y, z from foo"), is(variables("x", "y", "z")));
     }
 
+    @Test
+    public void insertReturning() {
+        assertThat(selectVariables("insert into foo (bar) values (1) returning x, y, z"), is(variables("x", "y", "z")));
+    }
+
+    @Test
+    public void updateReturning() {
+        assertThat(selectVariables("update foo set bar=1 returning x, y, z"), is(variables("x", "y", "z")));
+    }
+
+    @Test
+    public void deleteReturning() {
+        assertThat(selectVariables("delete from foo returning x, y, z"), is(variables("x", "y", "z")));
+    }
+
     @NotNull
     private static Matcher<List<String>> variables(@NotNull String... variables) {
         return is(asList(variables));
