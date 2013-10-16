@@ -23,7 +23,6 @@
 package fi.evident.dalesbred.plugin.idea.utils;
 
 import com.intellij.psi.*;
-import com.intellij.psi.util.PropertyUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.intellij.psi.impl.JavaConstantExpressionEvaluator.computeConstantExpression;
+import static com.intellij.psi.util.PropertyUtil.getPropertyNameBySetter;
+import static com.intellij.psi.util.PropertyUtil.isSimplePropertySetter;
 
 public final class ExpressionUtils {
 
@@ -70,20 +71,26 @@ public final class ExpressionUtils {
         return modifiers == null || !modifiers.hasModifierProperty(PsiModifier.STATIC);
     }
 
-    public static boolean hasPublicAccessorsForProperties(@NotNull PsiClass type, @NonNls List<String> properties) {
-        for (String property : properties)
-            if (!hasPublicAccessorForProperty(type, property))
+    public static boolean hasPublicAccessorsForColumns(@NotNull PsiClass type, @NonNls List<String> columns) {
+        for (String column : columns)
+            if (!hasPublicAccessorForResultField(type, column))
                 return false;
 
         return true;
     }
 
-    public static boolean hasPublicAccessorForProperty(@NotNull PsiClass type, @NotNull String property) {
-        PsiField field = type.findFieldByName(property, true);
+    private static boolean hasPublicAccessorForResultField(@NotNull PsiClass type, @NotNull String column) {
+        String property = column.replace("_", "");
 
-        return field != null && field.hasModifierProperty(PsiModifier.PUBLIC)
-                || PropertyUtil.findPropertySetter(type, property, false, true) != null;
+        for (PsiField field : type.getAllFields())
+            if (field.hasModifierProperty(PsiModifier.PUBLIC) && property.equalsIgnoreCase(field.getName()))
+                return true;
 
+        for (PsiMethod method : type.getAllMethods())
+            if (!method.hasModifierProperty(PsiModifier.STATIC) && isSimplePropertySetter(method) && getPropertyNameBySetter(method).equalsIgnoreCase(property))
+                return true;
+
+        return false;
     }
 
     @Nullable

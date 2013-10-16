@@ -137,13 +137,13 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
             for (PsiMethod ctor : constructors) {
                 if (ctor.hasModifierProperty(PsiModifier.PUBLIC)) {
                     int parameterCount = ctor.getParameterList().getParametersCount();
-                    if (parameterCount == selectCount || (parameterCount < selectCount && hasPublicAccessorsForProperties(type, selectItems.subList(parameterCount, selectCount))))
+                    if (parameterCount == selectCount || (parameterCount < selectCount && hasPublicAccessorsForColumns(type, selectItems.subList(parameterCount, selectCount))))
                         return true;
                 }
             }
             return false;
         } else {
-            return hasPublicAccessorsForProperties(type, selectItems);
+            return hasPublicAccessorsForColumns(type, selectItems);
         }
     }
 

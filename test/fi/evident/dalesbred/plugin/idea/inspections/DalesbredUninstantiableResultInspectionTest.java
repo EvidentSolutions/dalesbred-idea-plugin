@@ -48,4 +48,10 @@ public class DalesbredUninstantiableResultInspectionTest extends InspectionTestC
 
         myFixture.testHighlighting("uninstantiableResult/UpdatesWithReturning.java");
     }
+
+    public void testNonExactPropertyNames() {
+        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
+
+        myFixture.testHighlighting("uninstantiableResult/NonExactPropertyNames.java");
+    }
 }
