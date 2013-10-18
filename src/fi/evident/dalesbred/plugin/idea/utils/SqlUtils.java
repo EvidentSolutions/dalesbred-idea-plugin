@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 
 public final class SqlUtils {
 
-    private static final Pattern SELECT_LIST_PATTERN = Pattern.compile("\\s*select\\s+((all|distinct(\\s+on\\s*(\\(.*?\\)))?)\\s+)?(.+?)\\s+from.+", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SELECT_LIST_PATTERN = Pattern.compile("\\s*select\\s+((all|distinct(\\s+on\\s*(\\(.*?\\)))?)\\s+)?(.+?)(\\s+from.+|\\s*)?", Pattern.CASE_INSENSITIVE);
     private static final Pattern RETURNING_PATTERN = Pattern.compile(".+returning\\s+(.+)", Pattern.CASE_INSENSITIVE);
     private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(.+))?", Pattern.CASE_INSENSITIVE);
     private static final Pattern COMMA_SEP_PATTERN = Pattern.compile("\\s*,\\s*");

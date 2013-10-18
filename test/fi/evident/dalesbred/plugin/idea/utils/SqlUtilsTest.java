@@ -111,6 +111,12 @@ public class SqlUtilsTest {
         assertThat(selectVariables("delete from foo returning x, y, z"), is(variables("x", "y", "z")));
     }
 
+    @Test
+    public void parseSelectVariablesFromSelectWithoutFrom() {
+        assertThat(selectVariables("select foo, bar"), is(variables("foo", "bar")));
+        assertThat(selectVariables("select nextval('my_schema.foo_id_seq') as foo"), is(variables("foo")));
+    }
+
     @NotNull
     private static Matcher<List<String>> variables(@NotNull String... variables) {
         return is(asList(variables));
