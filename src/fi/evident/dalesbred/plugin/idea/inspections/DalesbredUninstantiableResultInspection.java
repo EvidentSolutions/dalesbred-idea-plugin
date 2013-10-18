@@ -132,6 +132,10 @@ public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspec
     private static boolean hasMatchingConstructor(@NotNull PsiClass type, @NotNull List<String> selectItems) {
         int selectCount = selectItems.size();
 
+        if (type.isEnum()) {
+            return selectCount == 1;
+        }
+
         PsiMethod[] constructors = type.getConstructors();
         if (constructors.length != 0) {
             for (PsiMethod ctor : constructors) {
