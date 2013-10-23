@@ -1,3 +1,7 @@
+## 0.0.8 (2013-10-23)
+
+  - Fixed exception which was thrown when SQL was invalid.
+
 ## 0.0.7 (2013-10-18)
 
   - Fixed spurious enum-instantiation warnings.
