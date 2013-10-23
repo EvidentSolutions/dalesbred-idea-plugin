@@ -1,3 +1,8 @@
+## 0.0.7 (2013-10-18)
+
+  - Fixed spurious enum-instantiation warnings.
+  - Support parsing SQL-statements without FOR.
+
 ## 0.0.6 (2013-10-16)
 
   - Use same resolution rules for property names as Dalesbred uses, causing fewer false warnings.
