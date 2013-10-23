@@ -112,6 +112,11 @@ public class SqlUtilsTest {
     }
 
     @Test
+    public void invalidQueriesReturnEmptyList() {
+        assertThat(selectVariables("select a,,b from foo"), is(variables()));
+    }
+
+    @Test
     public void parseSelectVariablesFromSelectWithoutFrom() {
         assertThat(selectVariables("select foo, bar"), is(variables("foo", "bar")));
         assertThat(selectVariables("select nextval('my_schema.foo_id_seq') as foo"), is(variables("foo")));

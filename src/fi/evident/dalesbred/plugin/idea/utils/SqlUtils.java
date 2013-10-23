@@ -23,7 +23,6 @@
 package fi.evident.dalesbred.plugin.idea.utils;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,11 +30,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+
 public final class SqlUtils {
 
-    private static final Pattern SELECT_LIST_PATTERN = Pattern.compile("\\s*select\\s+((all|distinct(\\s+on\\s*(\\(.*?\\)))?)\\s+)?(.+?)(\\s+from.+|\\s*)?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern RETURNING_PATTERN = Pattern.compile(".+returning\\s+(.+)", Pattern.CASE_INSENSITIVE);
-    private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(.+))?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SELECT_LIST_PATTERN = Pattern.compile("\\s*select\\s+((all|distinct(\\s+on\\s*(\\(.*?\\)))?)\\s+)?(.+?)(\\s+from.+|\\s*)?", CASE_INSENSITIVE);
+    private static final Pattern RETURNING_PATTERN = Pattern.compile(".+returning\\s+(.+)", CASE_INSENSITIVE);
+    private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(.+))?", CASE_INSENSITIVE);
     private static final Pattern COMMA_SEP_PATTERN = Pattern.compile("\\s*,\\s*");
 
     private SqlUtils() {
@@ -43,8 +44,8 @@ public final class SqlUtils {
 
     @NotNull
     public static List<String> selectVariables(@NotNull String sql) {
-        String selectList = selectList(sql);
-        if (selectList != null) {
+        try {
+            String selectList = selectList(sql);
             String[] selectItems = COMMA_SEP_PATTERN.split(selectList);
 
             List<String> result = new ArrayList<String>(selectItems.length);
@@ -52,13 +53,14 @@ public final class SqlUtils {
                 result.add(parseSelectItem(selectItem));
 
             return result;
-        } else {
+
+        } catch (SqlSyntaxException ignored) {
             return Collections.emptyList();
         }
     }
 
-    @Nullable
-    private static String selectList(@NotNull String sql) {
+    @NotNull
+    private static String selectList(@NotNull String sql) throws SqlSyntaxException {
         Matcher m1 = SELECT_LIST_PATTERN.matcher(sql);
         if (m1.matches())
             return m1.group(5);
@@ -67,14 +69,14 @@ public final class SqlUtils {
         if (m2.matches())
             return m2.group(1);
 
-        return null;
+        throw new SqlSyntaxException();
     }
 
     @NotNull
-    private static String parseSelectItem(@NotNull String selectItem) {
+    private static String parseSelectItem(@NotNull String selectItem) throws SqlSyntaxException {
         Matcher matcher = SELECT_ITEM_PATTERN.matcher(selectItem);
         if (!matcher.matches())
-            throw new IllegalArgumentException("no match for selectItem '" + selectItem + '\'');
+            throw new SqlSyntaxException();
 
         if (matcher.group(5) != null)
             return matcher.group(5);
@@ -85,6 +87,7 @@ public final class SqlUtils {
     public static int countQueryParametersPlaceholders(@NotNull String sql) {
         boolean inLiteral = false;
         int count = 0;
+
         for (int i = 0, len = sql.length(); i < len; i++) {
             char ch = sql.charAt(i);
             if (ch == '\'')
@@ -92,6 +95,7 @@ public final class SqlUtils {
             else if (ch == '?' && !inLiteral)
                 count++;
         }
+
         return count;
     }
 }
