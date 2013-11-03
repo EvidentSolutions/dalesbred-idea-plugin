@@ -1,3 +1,7 @@
+## 0.1.0 (2013-11-03)
+
+  - Support verifying calls to update-methods.
+
 ## 0.0.8 (2013-10-23)
 
   - Fixed exception which was thrown when SQL was invalid.
