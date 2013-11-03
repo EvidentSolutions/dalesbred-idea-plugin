@@ -42,6 +42,7 @@ public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalIns
     @SuppressWarnings("unchecked")
     private static final PsiMethodCallPattern FIND_METHOD_CALL = psiExpression().methodCall(or(findMethod(), executeQueryMethod()));
     private static final PsiMethodCallPattern SQL_QUERY_METHOD_CALL = psiExpression().methodCall(sqlQueryMethod());
+    private static final PsiMethodCallPattern UPDATE_METHOD_CALL = psiExpression().methodCall(updateMethod());
 
     @NotNull
     @Override
@@ -66,6 +67,9 @@ public class DalesbredIncorrectParameterCountInspection extends BaseJavaLocalIns
                     }
 
                 } else if (SQL_QUERY_METHOD_CALL.accepts(expression)) {
+                    PsiExpression[] parameters = expression.getArgumentList().getExpressions();
+                    verifyQueryParameterCount(parameters, 0, holder);
+                } else if (UPDATE_METHOD_CALL.accepts(expression)) {
                     PsiExpression[] parameters = expression.getArgumentList().getExpressions();
                     verifyQueryParameterCount(parameters, 0, holder);
                 }

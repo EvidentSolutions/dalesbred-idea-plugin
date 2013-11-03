@@ -115,6 +115,11 @@ public final class DalesbredPatterns {
     }
 
     @NotNull
+    public static ElementPattern<PsiMethod> updateMethod() {
+        return databaseMethod("update").withParameters(STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME);
+    }
+
+    @NotNull
     private static PsiMethodPattern databaseMethod(@NotNull String name) {
         return databaseMethod(object(name));
     }

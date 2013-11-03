@@ -22,13 +22,18 @@
 
 package fi.evident.dalesbred.plugin.idea.inspections;
 
-@SuppressWarnings("JUnitTestMethodWithNoAssertions")
+@SuppressWarnings({"JUnitTestMethodWithNoAssertions", "unchecked"})
 public class DalesbredIncorrectParameterCountInspectionTest extends InspectionTestCase {
 
     public void testSimpleCases() {
-        //noinspection unchecked
         myFixture.enableInspections(DalesbredIncorrectParameterCountInspection.class);
 
         myFixture.testHighlighting("incorrectParameterCount/SimpleCases.java");
+    }
+
+    public void testUpdates() {
+        myFixture.enableInspections(DalesbredIncorrectParameterCountInspection.class);
+
+        myFixture.testHighlighting("incorrectParameterCount/Updates.java");
     }
 }
