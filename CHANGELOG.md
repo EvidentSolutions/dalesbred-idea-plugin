@@ -1,3 +1,7 @@
+## 0.1.1 (2013-12-12)
+
+  - Improvements in parsing select-list.
+
 ## 0.1.0 (2013-11-03)
 
   - Support verifying calls to update-methods.
