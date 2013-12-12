@@ -122,6 +122,12 @@ public class SqlUtilsTest {
         assertThat(selectVariables("select nextval('my_schema.foo_id_seq') as foo"), is(variables("foo")));
     }
 
+    @Test
+    public void aliases() {
+        assertThat(selectVariables("select employee_id is not null as employee"), is(variables("employee")));
+        assertThat(selectVariables("select employee_id is not null::bool as employee"), is(variables("employee")));
+    }
+
     @NotNull
     private static Matcher<List<String>> variables(@NotNull String... variables) {
         return is(asList(variables));
