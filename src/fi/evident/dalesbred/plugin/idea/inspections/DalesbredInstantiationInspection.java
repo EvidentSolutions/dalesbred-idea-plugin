@@ -29,6 +29,7 @@ import com.intellij.psi.*;
 import fi.evident.dalesbred.plugin.idea.utils.DalesbredPatterns;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -100,8 +101,8 @@ public class DalesbredInstantiationInspection extends BaseJavaLocalInspectionToo
 
                     if (selectItems.contains("*"))
                         holder.registerProblem(parameters[1], "Can't verify construction when select list contains '*'.");
-                    else if (!hasMatchingConstructor(resultType, selectItems))
-                        holder.registerProblem(parameters[0], "Could not find a way to construct class with selected values.");
+                    else
+                        verifyMatchingConstructor(parameters, holder, resultType, selectItems);
                 }
             }
         }
@@ -129,11 +130,22 @@ public class DalesbredInstantiationInspection extends BaseJavaLocalInspectionToo
             holder.registerProblem(parameter, "Class is not instantiable.");
     }
 
-    private static boolean hasMatchingConstructor(@NotNull PsiClass type, @NotNull List<String> selectItems) {
+    private static void verifyMatchingConstructor(@NotNull PsiExpression[] parameters,
+                                                  @NotNull ProblemsHolder holder,
+                                                  @NotNull PsiClass resultType,
+                                                  @NotNull List<String> selectItems) {
+
+        String problem = checkConstruction(resultType, selectItems);
+        if (problem != null)
+            holder.registerProblem(parameters[0], problem);
+    }
+
+    @Nullable
+    private static String checkConstruction(@NotNull PsiClass type, @NotNull List<String> selectItems) {
         int selectCount = selectItems.size();
 
         if (type.isEnum()) {
-            return selectCount == 1;
+            return (selectCount == 1) ? null : "Instantiating enum requires 1 argument, but got " + selectCount + '.';
         }
 
         PsiMethod[] constructors = type.getConstructors();
@@ -142,13 +154,14 @@ public class DalesbredInstantiationInspection extends BaseJavaLocalInspectionToo
                 if (ctor.hasModifierProperty(PsiModifier.PUBLIC)) {
                     int parameterCount = ctor.getParameterList().getParametersCount();
                     if (parameterCount == selectCount || (parameterCount < selectCount && hasPublicAccessorsForColumns(type, selectItems.subList(parameterCount, selectCount))))
-                        return true;
+                        return null;
                 }
             }
-            return false;
-        } else {
-            return hasPublicAccessorsForColumns(type, selectItems);
+        } else if (hasPublicAccessorsForColumns(type, selectItems)) {
+            return null;
         }
+
+        return "Could not find a way to construct class with selected values.";
     }
 
     @Override
