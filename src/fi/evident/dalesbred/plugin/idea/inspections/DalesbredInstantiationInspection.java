@@ -40,7 +40,7 @@ import static fi.evident.dalesbred.plugin.idea.ui.ClassList.createClassesListCon
 import static fi.evident.dalesbred.plugin.idea.utils.ExpressionUtils.*;
 import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.selectVariables;
 
-public class DalesbredUninstantiableResultInspection extends BaseJavaLocalInspectionTool {
+public class DalesbredInstantiationInspection extends BaseJavaLocalInspectionTool {
 
     @NonNls
     public List<String> allowedTypes = new ArrayList<String>();

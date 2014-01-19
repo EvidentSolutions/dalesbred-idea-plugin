@@ -23,41 +23,41 @@
 package fi.evident.dalesbred.plugin.idea.inspections;
 
 @SuppressWarnings({"JUnitTestMethodWithNoAssertions", "unchecked"})
-public class DalesbredUninstantiableResultInspectionTest extends InspectionTestCase {
+public class DalesbredInstantiationInspectionTest extends InspectionTestCase {
 
     public void testSimpleCases() {
-        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
+        myFixture.enableInspections(DalesbredInstantiationInspection.class);
 
-        myFixture.testHighlighting("uninstantiableResult/SimpleCases.java");
+        myFixture.testHighlighting("instantiation/SimpleCases.java");
     }
 
     public void testConstructorValidation() {
-        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
+        myFixture.enableInspections(DalesbredInstantiationInspection.class);
 
-        myFixture.testHighlighting("uninstantiableResult/ConstructorValidation.java");
+        myFixture.testHighlighting("instantiation/ConstructorValidation.java");
     }
 
     public void testMapConstruction() {
-        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
+        myFixture.enableInspections(DalesbredInstantiationInspection.class);
 
-        myFixture.testHighlighting("uninstantiableResult/MapConstruction.java");
+        myFixture.testHighlighting("instantiation/MapConstruction.java");
     }
 
     public void testUpdatesWithReturning() {
-        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
+        myFixture.enableInspections(DalesbredInstantiationInspection.class);
 
-        myFixture.testHighlighting("uninstantiableResult/UpdatesWithReturning.java");
+        myFixture.testHighlighting("instantiation/UpdatesWithReturning.java");
     }
 
     public void testNonExactPropertyNames() {
-        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
+        myFixture.enableInspections(DalesbredInstantiationInspection.class);
 
-        myFixture.testHighlighting("uninstantiableResult/NonExactPropertyNames.java");
+        myFixture.testHighlighting("instantiation/NonExactPropertyNames.java");
     }
 
     public void testEnumConstruction() {
-        myFixture.enableInspections(DalesbredUninstantiableResultInspection.class);
+        myFixture.enableInspections(DalesbredInstantiationInspection.class);
 
-        myFixture.testHighlighting("uninstantiableResult/EnumConstruction.java");
+        myFixture.testHighlighting("instantiation/EnumConstruction.java");
     }
 }

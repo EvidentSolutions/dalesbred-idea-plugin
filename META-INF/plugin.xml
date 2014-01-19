@@ -18,11 +18,11 @@
     <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <localInspection displayName="Uninstantiable result class"
+        <localInspection displayName="Instantiation problem"
                          language="JAVA"
                          groupName="Dalesbred"
                          enabledByDefault="true"
-                         implementationClass="fi.evident.dalesbred.plugin.idea.inspections.DalesbredUninstantiableResultInspection"/>
+                         implementationClass="fi.evident.dalesbred.plugin.idea.inspections.DalesbredInstantiationInspection"/>
         <localInspection displayName="Invalid amount of parameters"
                          language="JAVA"
                          groupName="Dalesbred"
