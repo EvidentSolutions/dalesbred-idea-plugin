@@ -60,4 +60,10 @@ public class DalesbredInstantiationInspectionTest extends InspectionTestCase {
 
         myFixture.testHighlighting("instantiation/EnumConstruction.java");
     }
+
+    public void testUninstantiatedProperties() {
+        myFixture.enableInspections(DalesbredInstantiationInspection.class);
+
+        myFixture.testHighlighting("instantiation/UninstantiatedProperties.java");
+    }
 }

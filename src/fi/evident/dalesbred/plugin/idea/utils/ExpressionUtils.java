@@ -27,7 +27,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.intellij.psi.impl.JavaConstantExpressionEvaluator.computeConstantExpression;
 import static com.intellij.psi.util.PropertyUtil.getPropertyNameBySetter;
@@ -80,10 +83,10 @@ public final class ExpressionUtils {
     }
 
     private static boolean hasPublicAccessorForResultField(@NotNull PsiClass type, @NotNull String column) {
-        String property = column.replace("_", "");
+        String property = normalizeSelectName(column);
 
         for (PsiField field : type.getAllFields())
-            if (field.hasModifierProperty(PsiModifier.PUBLIC) && property.equalsIgnoreCase(field.getName()))
+            if (isSettableField(field) && property.equalsIgnoreCase(field.getName()))
                 return true;
 
         for (PsiMethod method : type.getAllMethods())
@@ -91,6 +94,42 @@ public final class ExpressionUtils {
                 return true;
 
         return false;
+    }
+
+    @NotNull
+    public static List<String> unusedProperties(@NotNull PsiClass type, @NotNull List<String> items) {
+        Set<String> usedNames = new HashSet<String>(items.size());
+        for (String item : items)
+            usedNames.add(normalizeSelectName(item));
+
+        List<String> result = new ArrayList<String>();
+
+        for (PsiField field : type.getAllFields())
+            if (isSettableField(field)) {
+                String fieldName = field.getName();
+                if (usedNames.add(fieldName.toLowerCase()))
+                    result.add(fieldName);
+            }
+
+        for (PsiMethod method : type.getAllMethods())
+            if (!method.hasModifierProperty(PsiModifier.STATIC) && isSimplePropertySetter(method)) {
+                String propertyName = getPropertyNameBySetter(method);
+                if (usedNames.add(propertyName.toLowerCase()))
+                    result.add(propertyName);
+            }
+
+        return result;
+    }
+
+    private static boolean isSettableField(@NotNull PsiField field) {
+        return field.hasModifierProperty(PsiModifier.PUBLIC)
+            && !field.hasModifierProperty(PsiModifier.FINAL)
+            && !field.hasModifierProperty(PsiModifier.STATIC);
+    }
+
+    @NotNull
+    private static String normalizeSelectName(@NotNull String item) {
+        return item.replace("_", "").toLowerCase();
     }
 
     @Nullable

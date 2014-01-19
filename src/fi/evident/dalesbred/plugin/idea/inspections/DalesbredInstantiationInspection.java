@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.intellij.patterns.PsiJavaPatterns.psiExpression;
@@ -158,7 +159,20 @@ public class DalesbredInstantiationInspection extends BaseJavaLocalInspectionToo
                 }
             }
         } else if (hasPublicAccessorsForColumns(type, selectItems)) {
-            return null;
+            List<String> uninstantiatedProperties = unusedProperties(type, selectItems);
+            if (uninstantiatedProperties.isEmpty())
+                return null;
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Following properties are not initialized: ");
+
+            for (Iterator<String> it = uninstantiatedProperties.iterator(); it.hasNext(); ) {
+                sb.append(it.next());
+                if (it.hasNext())
+                    sb.append(", ");
+            }
+
+            return sb.toString();
         }
 
         return "Could not find a way to construct class with selected values.";
