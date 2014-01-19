@@ -1,15 +1,15 @@
 <idea-plugin version="2" url="https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
-    <version>0.1.1</version>
+    <version>0.2.0</version>
     <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
 
     <description><![CDATA[
-      <a href="https://bitbucket.org/evidentsolutions/dalesbred">Dalesbred</a> support.
+      <a href="https://dalesbred.evident.fi">Dalesbred</a> support.
       ]]></description>
 
     <change-notes><![CDATA[
-      Support verifying calls to update-methods.
+      Produce warnings for uninitialized properties.
       ]]>
     </change-notes>
 
