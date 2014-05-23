@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
     <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
 
     <description><![CDATA[
@@ -9,7 +9,8 @@
       ]]></description>
 
     <change-notes><![CDATA[
-      Produce warnings for uninitialized properties.
+      - Fixes in select-list parsing.
+      - Produce warnings for uninitialized properties.
       ]]>
     </change-notes>
 
