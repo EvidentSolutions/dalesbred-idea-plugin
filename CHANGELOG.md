@@ -1,3 +1,9 @@
+## x.y.z (yyyy-mm-dd)
+
+  - Fixed bugs in select list parsing:
+     - argument-separating commas in function calls were confused with select-list item separators.
+     - commas inside quoted strings were confused with select-list item separators. 
+
 ## 0.1.1 (2013-12-12)
 
   - Improvements in parsing select-list.

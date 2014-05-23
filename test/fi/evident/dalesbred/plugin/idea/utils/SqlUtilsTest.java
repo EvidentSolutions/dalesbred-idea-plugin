@@ -123,6 +123,22 @@ public class SqlUtilsTest {
     }
 
     @Test
+    public void numberOfColumnsInFunctionCalls() {
+        assertThat(selectVariables("select coalesce(x, y) from foo").size(), is(1));
+        assertThat(selectVariables("select coalesce(max(x, z), min(y, z)) from foo").size(), is(1));
+    }
+
+    @Test
+    public void selectListWithCommasInsideLiterals() {
+        assertThat(selectVariables("select 'foo,bar', \"quux,xyzzy\", [foo,bar] from foo").size(), is(3));
+    }
+
+    @Test
+    public void malformedNesting() {
+        assertThat(selectVariables("select coalesce)x, y( from foo"), is(variables()));
+    }
+
+    @Test
     public void aliases() {
         assertThat(selectVariables("select employee_id is not null as employee"), is(variables("employee")));
         assertThat(selectVariables("select employee_id is not null::bool as employee"), is(variables("employee")));

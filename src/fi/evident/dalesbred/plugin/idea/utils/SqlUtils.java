@@ -37,7 +37,7 @@ public final class SqlUtils {
     private static final Pattern SELECT_LIST_PATTERN = Pattern.compile("\\s*select\\s+((all|distinct(\\s+on\\s*(\\(.*?\\)))?)\\s+)?(.+?)(\\s+from.+|\\s*)?", CASE_INSENSITIVE);
     private static final Pattern RETURNING_PATTERN = Pattern.compile(".+returning\\s+(.+)", CASE_INSENSITIVE);
     private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(\\S+))?", CASE_INSENSITIVE);
-    private static final Pattern COMMA_SEP_PATTERN = Pattern.compile("\\s*,\\s*");
+    enum SelectListParseState { INITIAL, QUOTED_SINGLE, QUOTED_DOUBLE }
 
     private SqlUtils() {
     }
@@ -46,17 +46,72 @@ public final class SqlUtils {
     public static List<String> selectVariables(@NotNull String sql) {
         try {
             String selectList = selectList(sql);
-            String[] selectItems = COMMA_SEP_PATTERN.split(selectList);
-
-            List<String> result = new ArrayList<String>(selectItems.length);
-            for (String selectItem : selectItems)
-                result.add(parseSelectItem(selectItem));
-
-            return result;
+            return parseSelectList(selectList);
 
         } catch (SqlSyntaxException ignored) {
             return Collections.emptyList();
         }
+    }
+
+    @NotNull
+    private static List<String> parseSelectList(@NotNull String selectList) throws SqlSyntaxException {
+        SelectListParseState state = SelectListParseState.INITIAL;
+        List<String> result = new ArrayList<String>();
+        int currentStart = 0;
+        int parenNesting = 0;
+        int bracketNesting = 0;
+
+        for (int i = 0, len = selectList.length(); i < len; i++) {
+            char ch = selectList.charAt(i);
+
+            switch (state) {
+                case INITIAL:
+                    switch (ch) {
+                        case ',':
+                            if (parenNesting == 0 && bracketNesting == 0) {
+                                result.add(parseSelectItem(selectList.substring(currentStart, i).trim()));
+                                currentStart = i + 1;
+                            }
+                            break;
+                        case '(':
+                            parenNesting++;
+                            break;
+                        case ')':
+                            if (parenNesting == 0)
+                                throw new SqlSyntaxException();
+                            parenNesting--;
+                            break;
+                        case '[':
+                            bracketNesting++;
+                            break;
+                        case ']':
+                            if (bracketNesting == 0)
+                                throw new SqlSyntaxException();
+                            bracketNesting--;
+                            break;
+                        case '\'':
+                            state = SelectListParseState.QUOTED_SINGLE;
+                            break;
+                        case '"':
+                            state = SelectListParseState.QUOTED_DOUBLE;
+                            break;
+                    }
+                    break;
+                case QUOTED_SINGLE:
+                    if (ch == '\'')
+                        state = SelectListParseState.INITIAL;
+                    break;
+                case QUOTED_DOUBLE:
+                    if (ch == '"')
+                        state = SelectListParseState.INITIAL;
+                    break;
+            }
+        }
+
+        if (currentStart < selectList.length())
+            result.add(parseSelectItem(selectList.substring(currentStart).trim()));
+
+        return result;
     }
 
     @NotNull
