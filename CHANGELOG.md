@@ -1,8 +1,12 @@
-## x.y.z (yyyy-mm-dd)
+## 0.2.1 (2014-05-23)
 
   - Fixed bugs in select list parsing:
      - argument-separating commas in function calls were confused with select-list item separators.
      - commas inside quoted strings were confused with select-list item separators. 
+
+## 0.2.0 (2014-01-19)
+
+  - Produce warnings about uninitialized properties.
 
 ## 0.1.1 (2013-12-12)
 
