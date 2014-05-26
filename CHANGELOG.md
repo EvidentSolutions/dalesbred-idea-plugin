@@ -1,3 +1,7 @@
+## 0.2.2 (2014-05-26)
+
+- Fixed target bytecode version so that plugin works with JDK 1.6.
+
 ## 0.2.1 (2014-05-23)
 
 - Fixed bugs in select list parsing:
