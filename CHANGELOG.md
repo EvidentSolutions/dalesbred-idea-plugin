@@ -1,3 +1,7 @@
+## x.y.z (yyyy-mm-dd)
+
+- Support analyzing new updateAndProcessGeneratedKeys.
+
 ## 0.2.2 (2014-05-26)
 
 - Fixed target bytecode version so that plugin works with JDK 1.6.

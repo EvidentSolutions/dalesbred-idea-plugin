@@ -120,6 +120,13 @@ public final class DalesbredPatterns {
     }
 
     @NotNull
+    public static ElementPattern<PsiMethod> updateAndProcessGeneratedKeysMethod() {
+        return or(
+                databaseMethod("updateAndProcessGeneratedKeys").withParameters(RESULT_SET_PROCESSOR_CLASS_NAME, STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod("updateAndProcessGeneratedKeys").withParameters(RESULT_SET_PROCESSOR_CLASS_NAME, SQL_QUERY_CLASS_NAME));
+    }
+
+    @NotNull
     private static PsiMethodPattern databaseMethod(@NotNull String name) {
         return databaseMethod(object(name));
     }
