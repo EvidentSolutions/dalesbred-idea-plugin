@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+- Support analyzing SQL statements with newlines.
 - Support analyzing new updateAndProcessGeneratedKeys.
 
 ## 0.2.2 (2014-05-26)

@@ -45,7 +45,7 @@ public final class SqlUtils {
     @NotNull
     public static List<String> selectVariables(@NotNull String sql) {
         try {
-            String selectList = selectList(sql);
+            String selectList = selectList(sql.replace('\r', ' ').replace('\n', ' '));
             return parseSelectList(selectList);
 
         } catch (SqlSyntaxException ignored) {

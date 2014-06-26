@@ -144,6 +144,11 @@ public class SqlUtilsTest {
         assertThat(selectVariables("select employee_id is not null::bool as employee"), is(variables("employee")));
     }
 
+    @Test
+    public void parseSelectVariablesWhenStringHasNewlines() {
+        assertThat(selectVariables("\nSELECT\nfoo, bar,\nbaz \nFROM \nfoobar\n"), is(variables("foo", "bar", "baz")));
+    }
+
     @NotNull
     private static Matcher<List<String>> variables(@NotNull String... variables) {
         return is(asList(variables));
