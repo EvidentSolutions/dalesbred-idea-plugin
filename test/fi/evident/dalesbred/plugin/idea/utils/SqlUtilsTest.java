@@ -145,6 +145,16 @@ public class SqlUtilsTest {
     }
 
     @Test
+    public void ansiQuotedColumnNames() {
+        assertThat(selectVariables("select \"foo\", \"bar\" from quux"), is(variables("foo", "bar")));
+    }
+
+    @Test
+    public void sqlServerQuotedColumnNames() {
+        assertThat(selectVariables("select [foo], [bar] from quux"), is(variables("foo", "bar")));
+    }
+
+    @Test
     public void parseSelectVariablesWhenStringHasNewlines() {
         assertThat(selectVariables("\nSELECT\nfoo, bar,\nbaz \nFROM \nfoobar\n"), is(variables("foo", "bar", "baz")));
     }

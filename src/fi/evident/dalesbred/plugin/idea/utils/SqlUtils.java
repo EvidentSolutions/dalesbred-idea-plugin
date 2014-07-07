@@ -134,9 +134,17 @@ public final class SqlUtils {
             throw new SqlSyntaxException();
 
         if (matcher.group(5) != null)
-            return matcher.group(5);
+            return normalizeAlias(matcher.group(5));
 
-        return matcher.group(2);
+        return normalizeAlias(matcher.group(2));
+    }
+
+    @NotNull
+    private static String normalizeAlias(@NotNull String alias) {
+        if ((alias.startsWith("\"") && alias.endsWith("\"")) || (alias.startsWith("[") && alias.endsWith("]")))
+            return alias.substring(1, alias.length()-1);
+        else
+            return alias;
     }
 
     public static int countQueryParametersPlaceholders(@NotNull String sql) {
