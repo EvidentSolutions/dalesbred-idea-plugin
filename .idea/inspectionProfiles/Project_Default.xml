@@ -753,6 +753,7 @@
       <option name="ignoreCantWrap" value="false" />
     </inspection_tool>
     <inspection_tool class="ExceptionNameDoesntEndWithException" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExistsEquals" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ExpectedExceptionNeverThrown" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ExtendsAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ExtendsConcreteCollection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -792,6 +793,9 @@
       <option name="m_ignoreFinalFields" value="false" />
     </inspection_tool>
     <inspection_tool class="FileEqualsUsage" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="FilterHeadOption" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="FilterSize" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="FilterSizeCheck" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FinalClass" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FinalMethod" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FinalMethodInFinalClass" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -806,6 +810,8 @@
     </inspection_tool>
     <inspection_tool class="FinalizeNotProtected" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FinallyBlockCannotCompleteNormally" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="FindIsDefined" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="FindNotEqualsNone" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="Fix shebang" enabled="false" level="WARNING" enabled_by_default="true">
       <shebang>/bin/bash</shebang>
       <shebang>/bin/sh</shebang>
@@ -813,6 +819,7 @@
     <inspection_tool class="FloatLiteralEndingWithDecimalPoint" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FloatingPointEquality" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FlowRequiredBeanTypeInspection" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="FoldTrueAnd" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ForCanBeForeach" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="REPORT_INDEXED_LOOP" value="true" />
       <option name="ignoreUntypedCollections" value="false" />
@@ -843,6 +850,8 @@
     <inspection_tool class="GWTRemoteServiceAsyncCheck" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="GWTStyleCheck" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="GemInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="GetGetOrElse" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GetOrElseNull" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="GherkinBrokenTableInspection" enabled="false" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="GjsLint" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="Global definition of local var" enabled="false" level="WEAK WARNING" enabled_by_default="true" />
@@ -1449,6 +1458,8 @@
     <inspection_tool class="ManagedBeanClassInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="ManualArrayCopy" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ManualArrayToCollectionCopy" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="MapGetOrElse" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="MapGetOrElseFalse" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MapReplaceableByEnumMap" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MarkerInterface" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MatchToPartialFunction" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1639,6 +1650,7 @@
     <inspection_tool class="NonThreadSafeLazyInitialization" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="NoopMethodInAbstractClass" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="NotImplementedCode" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="NotIsEmpty" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NotifyCalledOnCondition" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NotifyNotInSynchronizedContext" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NotifyWithoutCorrespondingWait" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -2069,6 +2081,7 @@
     <inspection_tool class="ScalaRedundantConversion" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ScalaUnnecessaryParentheses" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ScalaUnnecessarySemicolon" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ScalaUnreachableCode" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ScalaUnresolvedPropertyKey" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="ScalaUnusedSymbol" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ScalaXmlUnmatchedTag" enabled="false" level="ERROR" enabled_by_default="false" />
@@ -2121,6 +2134,7 @@
     <inspection_tool class="SimplifiableAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SimplifiableConditionalExpression" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SimplifiableEqualsExpression" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="SimplifiableFoldOrReduce" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SimplifiableIfStatement" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SimplifiableJUnitAssertion" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SimplifyBoolean" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -2137,6 +2151,7 @@
     <inspection_tool class="SocketResource" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="insideTryAllowed" value="false" />
     </inspection_tool>
+    <inspection_tool class="SortFilter" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SpellCheckingInspection" enabled="true" level="TYPO" enabled_by_default="true">
       <scope name="Not checked for typos" level="TYPO" enabled="false">
         <option name="processCode" value="true" />
