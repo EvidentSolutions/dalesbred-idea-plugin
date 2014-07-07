@@ -1,3 +1,7 @@
+## 0.2.4 (2014-07-07)
+
+- Normalize quoted alias-names when analyzing SQL-queries.
+
 ## 0.2.3 (2014-06-26)
 
 - Support analyzing SQL statements with newlines.

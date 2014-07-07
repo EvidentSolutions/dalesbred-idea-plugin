@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
-    <version>0.2.3</version>
+    <version>0.2.4</version>
     <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
 
     <description><![CDATA[
@@ -9,10 +9,36 @@
       ]]></description>
 
     <change-notes><![CDATA[
-      <ul>
-        <li>Support analyzing SQL statements with newlines.</li>
-        <li>Support analyzing new updateAndProcessGeneratedKeys.</li>
-      </ul>
+        <h3>0.2.4 (2014-07-07)</h3>
+        <ul>
+            <li>Normalize quoted alias-names when analyzing SQL-queries.</li>
+        </ul>
+
+        <h3>0.2.3 (2014-06-26)</h3>
+        <ul>
+            <li>Support analyzing SQL statements with newlines.</li>
+            <li>Support analyzing new updateAndProcessGeneratedKeys.</li>
+        </ul>
+
+        <h3>0.2.2 (2014-05-26)</h3>
+        <ul>
+            <li>Fixed target bytecode version so that plugin works with JDK 1.6.</li>
+        </ul>
+
+        <h3>0.2.1 (2014-05-23)</h3>
+        <ul>
+            <li>Fixed bugs in select list parsing:
+                <ul>
+                    <li>argument-separating commas in function calls were confused with select-list item separators.</li>
+                    <li>commas inside quoted strings were confused with select-list item separators.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>0.2.0 (2014-01-19)</h3>
+        <ul>
+            <li>Produce warnings about uninitialized properties.</li>
+        </ul>
       ]]>
     </change-notes>
 
