@@ -138,8 +138,15 @@ public final class ExpressionUtils {
         while (true) {
             if (exp instanceof PsiClassObjectAccessExpression) {
                 PsiType type = ((PsiClassObjectAccessExpression) exp).getOperand().getType();
-                if (type instanceof PsiClassType)
+                if (type instanceof PsiClassType) {
                     return ((PsiClassType) type).resolve();
+                } else if (type instanceof PsiPrimitiveType) {
+                    PsiClassType boxedType = ((PsiPrimitiveType) type).getBoxedType(root);
+                    if (boxedType != null)
+                        return boxedType.resolve();
+                }
+
+                return null;
 
             } else if (exp instanceof PsiReferenceExpression) {
                 PsiElement resolved = ((PsiReference) exp).resolve();

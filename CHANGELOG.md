@@ -1,3 +1,7 @@
+## 0.2.5 (2014-10-28)
+
+- Fixed infinite loop when validating find-calls of primitive types.
+ 
 ## 0.2.4 (2014-07-07)
 
 - Normalize quoted alias-names when analyzing SQL-queries.
