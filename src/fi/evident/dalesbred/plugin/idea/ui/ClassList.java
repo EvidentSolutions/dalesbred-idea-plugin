@@ -26,7 +26,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.util.ClassFilter;
 import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeClassChooserFactory;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vcs.ComparableComparator;
@@ -45,13 +45,14 @@ import java.util.List;
 
 import static com.intellij.ui.SeparatorFactory.createSeparator;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public final class ClassList {
     private ClassList() {
     }
 
     @NotNull
     public static JPanel createClassesListControl(@NotNull List<String> classNames, @NotNull String title) {
-        SortedListModel<String> listModel = SortedListModel.create(new ComparableComparator<String>());
+        SortedListModel listModel = SortedListModel.create(new ComparableComparator<String>());
         listModel.addAll(classNames);
 
         JList list = new JBList(listModel);
@@ -64,12 +65,12 @@ public final class ClassList {
     }
 
     @NotNull
-    private static ToolbarDecorator createListWithActions(@NotNull final JList list, @NotNull final SortedListModel<String> listModel) {
+    private static ToolbarDecorator createListWithActions(@NotNull final JList list, @NotNull final SortedListModel listModel) {
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(list);
         decorator.setAddAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton button) {
-                Project project = PlatformDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(list));
+                Project project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(list));
                 if (project == null)
                     project = ProjectManager.getInstance().getDefaultProject();
                 TreeClassChooser chooser = TreeClassChooserFactory.getInstance(project)
