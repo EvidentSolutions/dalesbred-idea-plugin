@@ -40,6 +40,8 @@ import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.util.List;
 
@@ -51,9 +53,27 @@ public final class ClassList {
     }
 
     @NotNull
-    public static JPanel createClassesListControl(@NotNull List<String> classNames, @NotNull String title) {
-        SortedListModel listModel = SortedListModel.create(new ComparableComparator<String>());
+    public static JPanel createClassesListControl(@NotNull final List<String> classNames, @NotNull String title) {
+        final SortedListModel listModel = SortedListModel.create(new ComparableComparator<String>());
         listModel.addAll(classNames);
+
+        listModel.addListDataListener(new ListDataListener() {
+            @Override
+            public void intervalAdded(ListDataEvent e) {
+                contentsChanged(e);
+            }
+
+            @Override
+            public void intervalRemoved(ListDataEvent e) {
+                contentsChanged(e);
+            }
+
+            @Override
+            public void contentsChanged(ListDataEvent e) {
+                classNames.clear();
+                classNames.addAll(listModel.getItems());
+            }
+        });
 
         JList list = new JBList(listModel);
         list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
