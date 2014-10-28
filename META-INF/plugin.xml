@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
-    <version>0.2.4</version>
+    <version>0.2.5</version>
     <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
 
     <description><![CDATA[
@@ -9,6 +9,12 @@
       ]]></description>
 
     <change-notes><![CDATA[
+        <h3>0.2.5 (2014-10-28)</h3>
+        <ul>
+            <li>Fixed infinite loop when validating find-calls of primitive types.</li>
+            <li>Fixed adding allowed types for instantiation problems -inspection.</li>
+        </ul>
+
         <h3>0.2.4 (2014-07-07)</h3>
         <ul>
             <li>Normalize quoted alias-names when analyzing SQL-queries.</li>
