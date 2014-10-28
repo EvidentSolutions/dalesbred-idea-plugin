@@ -2,7 +2,7 @@ import fi.evident.dalesbred.Database;
 
 import java.lang.String;
 
-public class SimpleCases {
+public class UpdatesWithReturning {
 
     Database db;
 

@@ -6,7 +6,7 @@ import fi.evident.dalesbred.results.RowMapper;
 import java.lang.Integer;
 import java.lang.String;
 
-public class SimpleCases {
+public class Updates {
 
     Database db;
 
