@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
-    <version>0.2.5</version>
+    <version>0.2.6</version>
     <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
 
     <description><![CDATA[
@@ -9,6 +9,11 @@
       ]]></description>
 
     <change-notes><![CDATA[
+        <h3>0.2.6 (2015-03-27)</h3>
+        <ul>
+            <li>Support @DalesbredIgnore introduced by Dalesbred 0.7.1.</li>
+        </ul>
+
         <h3>0.2.5 (2014-10-28)</h3>
         <ul>
             <li>Fixed infinite loop when validating find-calls of primitive types.</li>

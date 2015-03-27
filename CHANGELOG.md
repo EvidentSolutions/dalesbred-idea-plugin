@@ -1,3 +1,7 @@
+## 0.2.6 (2015-03-27)
+
+- Support @DalesbredIgnore introduced by Dalesbred 0.7.1.
+
 ## 0.2.5 (2014-10-28)
 
 - Fixed infinite loop when validating find-calls of primitive types.
