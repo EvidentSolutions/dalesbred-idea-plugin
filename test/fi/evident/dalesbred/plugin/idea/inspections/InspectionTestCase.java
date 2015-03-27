@@ -52,8 +52,7 @@ public abstract class InspectionTestCase extends LightCodeInsightFixtureTestCase
 
             Library.ModifiableModel libraryModel = library.getModifiableModel();
 
-            String userHome = System.getProperty("user.home");
-            String jarPath = userHome + "/.m2/repository/fi/evident/dalesbred/dalesbred/0.5.0/dalesbred-0.5.0.jar";
+            String jarPath = "libs/dalesbred-0.7.1.jar";
             VirtualFile jar = JarFileSystem.getInstance().refreshAndFindFileByPath(jarPath + "!/");
             if (jar != null) {
                 libraryModel.addRoot(jar, OrderRootType.CLASSES);
