@@ -152,7 +152,7 @@ public class DalesbredInstantiationInspection extends BaseJavaLocalInspectionToo
         PsiMethod[] constructors = type.getConstructors();
         if (constructors.length != 0) {
             for (PsiMethod ctor : constructors) {
-                if (ctor.hasModifierProperty(PsiModifier.PUBLIC)) {
+                if (ctor.hasModifierProperty(PsiModifier.PUBLIC) && !isIgnored(ctor)) {
                     int parameterCount = ctor.getParameterList().getParametersCount();
                     if (parameterCount == selectCount || (parameterCount < selectCount && hasPublicAccessorsForColumns(type, selectItems.subList(parameterCount, selectCount))))
                         return null;

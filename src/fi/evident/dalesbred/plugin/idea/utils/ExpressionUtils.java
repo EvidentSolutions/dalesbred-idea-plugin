@@ -61,7 +61,7 @@ public final class ExpressionUtils {
             return false;
 
         for (PsiMethod ctor : constructors)
-            if (ctor.hasModifierProperty(PsiModifier.PUBLIC))
+            if (ctor.hasModifierProperty(PsiModifier.PUBLIC) && !isIgnored(cl))
                 return false;
 
         return true;
@@ -90,7 +90,7 @@ public final class ExpressionUtils {
                 return true;
 
         for (PsiMethod method : type.getAllMethods())
-            if (!method.hasModifierProperty(PsiModifier.STATIC) && isSimplePropertySetter(method) && getPropertyNameBySetter(method).equalsIgnoreCase(property))
+            if (isCallableSetter(method) && getPropertyNameBySetter(method).equalsIgnoreCase(property))
                 return true;
 
         return false;
@@ -112,7 +112,7 @@ public final class ExpressionUtils {
             }
 
         for (PsiMethod method : type.getAllMethods())
-            if (!method.hasModifierProperty(PsiModifier.STATIC) && isSimplePropertySetter(method)) {
+            if (isCallableSetter(method)) {
                 String propertyName = getPropertyNameBySetter(method);
                 if (usedNames.add(propertyName.toLowerCase()))
                     result.add(propertyName);
@@ -121,10 +121,28 @@ public final class ExpressionUtils {
         return result;
     }
 
+    private static boolean isCallableSetter(@NotNull PsiMethod method) {
+        return !method.hasModifierProperty(PsiModifier.STATIC)
+            && isSimplePropertySetter(method)
+            && !isIgnored(method);
+    }
+
+    public static boolean isIgnored(@NotNull PsiMember member) {
+        PsiModifierList modifierList = member.getModifierList();
+        if (modifierList == null) return false;
+
+        for (PsiAnnotation annotation : modifierList.getAnnotations())
+            if ("fi.evident.dalesbred.DalesbredIgnore".equals(annotation.getQualifiedName()))
+                return true;
+
+        return false;
+    }
+
     private static boolean isSettableField(@NotNull PsiField field) {
         return field.hasModifierProperty(PsiModifier.PUBLIC)
             && !field.hasModifierProperty(PsiModifier.FINAL)
-            && !field.hasModifierProperty(PsiModifier.STATIC);
+            && !field.hasModifierProperty(PsiModifier.STATIC)
+            && !isIgnored(field);
     }
 
     @NotNull
