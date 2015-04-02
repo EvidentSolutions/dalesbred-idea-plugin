@@ -35,7 +35,12 @@ final class SqlReader {
         this.sql = sql;
     }
 
-    void skipBalancedParens() throws SqlSyntaxException {
+    public void skipSpaces() {
+        while (hasMore() && Character.isWhitespace(sql.charAt(index)))
+            index++;
+    }
+
+    public void skipBalancedParens() throws SqlSyntaxException {
         boolean insideQuote = false;
         int parenNesting = 0;
 
@@ -74,5 +79,28 @@ final class SqlReader {
 
     public char readChar() {
         return sql.charAt(index++);
+    }
+
+    public boolean lookingAt(@NotNull String s) {
+        return sql.regionMatches(true, index, s, 0, s.length());
+    }
+
+    public boolean skipIfLookingAt(@NotNull String s) {
+        if (lookingAt(s)) {
+            index += s.length();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void skipName() {
+        while (hasMore() && Character.isLetterOrDigit(sql.charAt(index)))
+            index++;
+    }
+
+    public void expect(@NotNull String s) throws SqlSyntaxException {
+        if (!skipIfLookingAt(s))
+            throw new SqlSyntaxException();
     }
 }

@@ -37,8 +37,6 @@ public final class SqlUtils {
     private static final Pattern SELECT_LIST_PATTERN = Pattern.compile("\\s*select\\s+((all|distinct(\\s+on\\s*(\\(.*?\\)))?)\\s+)?(.+?)(\\s+from.+|\\s*)?", CASE_INSENSITIVE);
     private static final Pattern RETURNING_PATTERN = Pattern.compile(".+returning\\s+(.+)", CASE_INSENSITIVE);
     private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(\\S+))?", CASE_INSENSITIVE);
-    private static final Pattern CTE_PATTERN = Pattern.compile("\\s*with(\\s+recursive)?\\s+(.+)", CASE_INSENSITIVE);
-    private static final Pattern WITH_ITEM_PATTERN = Pattern.compile("\\s*(,\\s*)?(\\S+)(\\s*\\(.+\\)|\\s+)\\s*(as)\\s.+", CASE_INSENSITIVE);
 
     enum SelectListParseState {INITIAL, QUOTED_SINGLE, QUOTED_DOUBLE}
 
@@ -151,36 +149,37 @@ public final class SqlUtils {
 
     @NotNull
     static String stripCommonTableExpression(@NotNull String sql) throws SqlSyntaxException {
-        Matcher matcher = CTE_PATTERN.matcher(sql);
+        SqlReader reader = new SqlReader(sql);
+        reader.skipSpaces();
 
-        if (!matcher.matches()) return sql;
+        if (!reader.skipIfLookingAt("with"))
+            return sql;
 
-        // Tail is the first CTE (without the 'WITH [RECURSIVE]' part), possible additional CTEs (separated by colon),
-        // and then the actual select query.
-        SqlReader reader = new SqlReader(matcher.group(2));
+        reader.skipSpaces();
+        reader.skipIfLookingAt("recursive");
 
-        boolean first = true;
+        skipWithItem(reader);
 
-        while (reader.hasMore()) {
-            String rest = reader.rest();
-            Matcher withMatcher = WITH_ITEM_PATTERN.matcher(rest);
-            if (withMatcher.matches()) {
-                // invalid comma before first with-item
-                if (first && withMatcher.group(1) != null)
-                    throw new SqlSyntaxException();
+        while (reader.skipIfLookingAt(","))
+            skipWithItem(reader);
 
-                // check whether table expression has columns
-                String columnGroup = withMatcher.group(3);
-                if (columnGroup != null && columnGroup.contains("("))
-                    reader.skipBalancedParens();
+        return reader.rest();
+    }
 
-                reader.skipBalancedParens();
-                first = false;
-            } else
-                return rest;
+    private static void skipWithItem(@NotNull SqlReader reader) throws SqlSyntaxException {
+        reader.skipSpaces();
+        reader.skipName();
+        reader.skipSpaces();
+
+        if (reader.lookingAt("(")) {
+            reader.skipBalancedParens();
+            reader.skipSpaces();
         }
 
-        throw new SqlSyntaxException();
+        reader.expect("as");
+        reader.skipSpaces();
+
+        reader.skipBalancedParens();
     }
 
     @NotNull

@@ -198,8 +198,8 @@ public class SqlUtilsTest {
         assertThat(stripCTE(""), is(""));
         assertThat(stripCTE("select * from foo"), is("select * from foo"));
         assertThat(stripCTE("with temp as (select * from bar) select * from foo"), is("select * from foo"));
-//        assertThat(stripCTE("with temp(baz) as (select * from bar) select * from foo"), is("select * from foo"));
-//        assertThat(stripCTE("with temp(baz,quux) as (select * from bar) select * from foo"), is("select * from foo"));
+        assertThat(stripCTE("with temp(baz) as (select * from bar) select * from foo"), is("select * from foo"));
+        assertThat(stripCTE("with temp(baz,quux) as (select * from bar) select * from foo"), is("select * from foo"));
         assertThat(stripCTE("with temp(baz, quux) as (select * from bar) select * from foo"), is("select * from foo"));
         assertThat(stripCTE("with temp(baz, quux, xyzzy) as (select * from bar) select * from foo"), is("select * from foo"));
     }
