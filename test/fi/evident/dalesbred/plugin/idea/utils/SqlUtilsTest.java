@@ -159,6 +159,36 @@ public class SqlUtilsTest {
         assertThat(selectVariables("\nSELECT\nfoo, bar,\nbaz \nFROM \nfoobar\n"), is(variables("foo", "bar", "baz")));
     }
 
+    @Test
+    public void parseSelectVariablesWhenCTE() {
+        assertThat(selectVariables("with temp as (select 42) select foo, bar, baz from foobar"), is(variables("foo", "bar", "baz")));
+    }
+
+    @Test
+    public void parseSelectVariablesWhenMultipleCTEs() {
+        assertThat(selectVariables("with temp1 as (select 42), temp2 as (select 43) select foo, bar, baz from foobar"), is(variables("foo", "bar", "baz")));
+    }
+
+    @Test
+    public void parseSelectVariablesWhenCTEWithSubqueries() {
+        assertThat(selectVariables("with temp1 as (select 1 from (select 2 from (select 3))) select foo, bar, baz from foobar"), is(variables("foo", "bar", "baz")));
+    }
+
+    @Test
+    public void parseSelectVariablesWhenCTEWithEscapedParentheses() {
+        assertThat(selectVariables("with temp1 as (select '(') select foo, bar, baz from foobar"), is(variables("foo", "bar", "baz")));
+    }
+
+    @Test
+    public void parseSelectVariablesWhenCTEIsFromItem() {
+        assertThat(selectVariables("with temp as (select 1 as foo, 2 as bar, 3 as baz) select foo, bar, baz from temp"), is(variables("foo", "bar", "baz")));
+    }
+
+    @Test
+    public void parseSelectVariablesWhenMultilineCTE() {
+        assertThat(selectVariables("with \ntemp as (select \n42)\n select foo, bar, baz from foobar"), is(variables("foo", "bar", "baz")));
+    }
+
     @NotNull
     private static Matcher<List<String>> variables(@NotNull String... variables) {
         return is(asList(variables));
