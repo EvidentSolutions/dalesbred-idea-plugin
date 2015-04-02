@@ -1,3 +1,7 @@
+## 0.2.9 (2015-04-02)
+
+- Improvements in CTE parsing.
+
 ## 0.2.8 (2015-04-02)
 
 - Support for CTE column definitions.
