@@ -1,3 +1,7 @@
+## 0.2.7 (2015-04-02)
+
+- Support analyzing common table expressions.</li>
+
 ## 0.2.6 (2015-03-27)
 
 - Support @DalesbredIgnore introduced by Dalesbred 0.7.1.
