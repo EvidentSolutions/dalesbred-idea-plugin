@@ -37,7 +37,10 @@ public final class SqlUtils {
     private static final Pattern SELECT_LIST_PATTERN = Pattern.compile("\\s*select\\s+((all|distinct(\\s+on\\s*(\\(.*?\\)))?)\\s+)?(.+?)(\\s+from.+|\\s*)?", CASE_INSENSITIVE);
     private static final Pattern RETURNING_PATTERN = Pattern.compile(".+returning\\s+(.+)", CASE_INSENSITIVE);
     private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(\\S+))?", CASE_INSENSITIVE);
+    private static final Pattern CTE_PATTERN = Pattern.compile("\\s*with(\\s+recursive)?\\s+(.+)", CASE_INSENSITIVE);
+    private static final Pattern WITH_ITEM_PATTERN = Pattern.compile("\\s*(,\\s*)?(\\S+)\\s+(as)\\s.+", CASE_INSENSITIVE);
     enum SelectListParseState { INITIAL, QUOTED_SINGLE, QUOTED_DOUBLE }
+    enum CTESearchState { SEARCH_FIRST, SEARCH_ADDITIONAL, FOUND_WITH_ITEM }
 
     private SqlUtils() {
     }
@@ -116,11 +119,13 @@ public final class SqlUtils {
 
     @NotNull
     private static String selectList(@NotNull String sql) throws SqlSyntaxException {
-        Matcher m1 = SELECT_LIST_PATTERN.matcher(sql);
+        String normalized = normalizeQuery(sql);
+
+        Matcher m1 = SELECT_LIST_PATTERN.matcher(normalized);
         if (m1.matches())
             return m1.group(5);
 
-        Matcher m2 = RETURNING_PATTERN.matcher(sql);
+        Matcher m2 = RETURNING_PATTERN.matcher(normalized);
         if (m2.matches())
             return m2.group(1);
 
@@ -137,6 +142,68 @@ public final class SqlUtils {
             return normalizeAlias(matcher.group(5));
 
         return normalizeAlias(matcher.group(2));
+    }
+
+    @NotNull
+    private static String normalizeQuery(@NotNull String sql) throws SqlSyntaxException {
+        return stripCommonTableExpression(sql);
+    }
+
+    @NotNull
+    private static String stripCommonTableExpression(@NotNull String sql) throws SqlSyntaxException {
+        Matcher matcher = CTE_PATTERN.matcher(sql);
+
+        if (!matcher.matches()) return sql;
+
+        // Tail is the first CTE (without the 'WITH [RECURSIVE]' part), possible additional CTEs (separated by colon),
+        // and then the actual select query.
+        String tail = matcher.group(2);
+
+        CTESearchState state = CTESearchState.SEARCH_FIRST;
+        // TODO double quotes?
+        boolean insideQuote = false;
+        int parenNesting = 0;
+
+        for (int i = 0, len = tail.length(); i < len; i++) {
+            switch (state) {
+                case SEARCH_ADDITIONAL:
+                case SEARCH_FIRST:
+                    Matcher withMatcher = WITH_ITEM_PATTERN.matcher(tail.substring(i));
+                    if (withMatcher.matches()) {
+                        // invalid comma before first with-item
+                        if (state == CTESearchState.SEARCH_FIRST && withMatcher.group(1) != null)
+                            throw new SqlSyntaxException();
+
+                        state = CTESearchState.FOUND_WITH_ITEM;
+                    } else
+                        return tail.substring(i);
+                    break;
+                case FOUND_WITH_ITEM:
+                    switch (tail.charAt(i)) {
+                        case '(':
+                            if (!insideQuote)
+                                parenNesting++;
+                            break;
+                        case ')':
+                            if (!insideQuote) {
+                                parenNesting--;
+
+                                if (parenNesting < 0)
+                                    throw new SqlSyntaxException();
+
+                                if (parenNesting == 0)
+                                    state = CTESearchState.SEARCH_ADDITIONAL;
+                            }
+                            break;
+                        case '\'':
+                            insideQuote = !insideQuote;
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        throw new SqlSyntaxException();
     }
 
     @NotNull
