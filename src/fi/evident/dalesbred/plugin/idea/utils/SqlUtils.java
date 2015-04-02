@@ -170,8 +170,9 @@ public final class SqlUtils {
                     throw new SqlSyntaxException();
 
                 // check whether table expression has columns
-                if (withMatcher.group(3) != null && withMatcher.group(3).contains("("))
-                    reader.skipUntil(')');
+                String columnGroup = withMatcher.group(3);
+                if (columnGroup != null && columnGroup.contains("("))
+                    reader.skipBalancedParens();
 
                 reader.skipBalancedParens();
                 first = false;

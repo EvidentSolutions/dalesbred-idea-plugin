@@ -75,10 +75,4 @@ final class SqlReader {
     public char readChar() {
         return sql.charAt(index++);
     }
-
-    public void skipUntil(char c) {
-        while (hasMore())
-            if (readChar() == c)
-                break;
-    }
 }
