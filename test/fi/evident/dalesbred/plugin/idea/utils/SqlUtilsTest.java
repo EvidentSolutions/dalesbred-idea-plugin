@@ -28,8 +28,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.countQueryParametersPlaceholders;
-import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.selectVariables;
+import static fi.evident.dalesbred.plugin.idea.utils.SqlUtils.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -192,6 +191,22 @@ public class SqlUtilsTest {
     @Test
     public void parseSelectVariablesWhenCTEWithColumnNames() {
         assertThat(selectVariables("with temp(foo, bar, quux) as (select 1, 2, 3) select foo, bar, baz from foobar"), is(variables("foo", "bar", "baz")));
+    }
+
+    @Test
+    public void cteStripping() throws SqlSyntaxException {
+        assertThat(stripCTE(""), is(""));
+        assertThat(stripCTE("select * from foo"), is("select * from foo"));
+        assertThat(stripCTE("with temp as (select * from bar) select * from foo"), is("select * from foo"));
+//        assertThat(stripCTE("with temp(baz) as (select * from bar) select * from foo"), is("select * from foo"));
+//        assertThat(stripCTE("with temp(baz,quux) as (select * from bar) select * from foo"), is("select * from foo"));
+        assertThat(stripCTE("with temp(baz, quux) as (select * from bar) select * from foo"), is("select * from foo"));
+        assertThat(stripCTE("with temp(baz, quux, xyzzy) as (select * from bar) select * from foo"), is("select * from foo"));
+    }
+
+    @NotNull
+    private static String stripCTE(@NotNull String s) throws SqlSyntaxException {
+        return stripCommonTableExpression(s).trim();
     }
 
     @NotNull

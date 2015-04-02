@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Evident Solutions Oy
+ * Copyright (c) 2013-2015 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,8 +39,8 @@ public final class SqlUtils {
     private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(\\S+))?", CASE_INSENSITIVE);
     private static final Pattern CTE_PATTERN = Pattern.compile("\\s*with(\\s+recursive)?\\s+(.+)", CASE_INSENSITIVE);
     private static final Pattern WITH_ITEM_PATTERN = Pattern.compile("\\s*(,\\s*)?(\\S+)(\\s*\\(.+\\)|\\s+)\\s*(as)\\s.+", CASE_INSENSITIVE);
-    enum SelectListParseState { INITIAL, QUOTED_SINGLE, QUOTED_DOUBLE }
-    enum CTESearchState { SEARCH_FIRST, SEARCH_ADDITIONAL, FOUND_WITH_ITEM, }
+
+    enum SelectListParseState {INITIAL, QUOTED_SINGLE, QUOTED_DOUBLE}
 
     private SqlUtils() {
     }
@@ -150,73 +150,33 @@ public final class SqlUtils {
     }
 
     @NotNull
-    private static String stripCommonTableExpression(@NotNull String sql) throws SqlSyntaxException {
+    static String stripCommonTableExpression(@NotNull String sql) throws SqlSyntaxException {
         Matcher matcher = CTE_PATTERN.matcher(sql);
 
         if (!matcher.matches()) return sql;
 
         // Tail is the first CTE (without the 'WITH [RECURSIVE]' part), possible additional CTEs (separated by colon),
         // and then the actual select query.
-        String tail = matcher.group(2);
+        SqlReader reader = new SqlReader(matcher.group(2));
 
-        CTESearchState state = CTESearchState.SEARCH_FIRST;
-        // TODO double quotes?
-        boolean insideQuote = false;
-        int parenNesting = 0;
-        int ignoreColDefinitionParens = 0;
+        boolean first = true;
 
+        while (reader.hasMore()) {
+            String rest = reader.rest();
+            Matcher withMatcher = WITH_ITEM_PATTERN.matcher(rest);
+            if (withMatcher.matches()) {
+                // invalid comma before first with-item
+                if (first && withMatcher.group(1) != null)
+                    throw new SqlSyntaxException();
 
-        for (int i = 0, len = tail.length(); i < len; i++) {
-            switch (state) {
-                case SEARCH_ADDITIONAL:
-                case SEARCH_FIRST:
-                    Matcher withMatcher = WITH_ITEM_PATTERN.matcher(tail.substring(i));
-                    if (withMatcher.matches()) {
-                        // invalid comma before first with-item
-                        if (state == CTESearchState.SEARCH_FIRST && withMatcher.group(1) != null)
-                            throw new SqlSyntaxException();
+                // check whether table expression has columns
+                if (withMatcher.group(3) != null && withMatcher.group(3).contains("("))
+                    reader.skipUntil(')');
 
-                        // check whether table expression has columns
-                        if (withMatcher.group(3) != null && withMatcher.group(3).contains("("))
-                            ignoreColDefinitionParens = 2;
-
-                        state = CTESearchState.FOUND_WITH_ITEM;
-                    } else
-                        return tail.substring(i);
-                    break;
-                case FOUND_WITH_ITEM:
-                    switch (tail.charAt(i)) {
-                        case '(':
-                            if(ignoreColDefinitionParens > 0) {
-                                ignoreColDefinitionParens--;
-                                break;
-                            }
-
-                            if (!insideQuote)
-                                parenNesting++;
-                            break;
-                        case ')':
-                            if(ignoreColDefinitionParens > 0) {
-                                ignoreColDefinitionParens--;
-                                break;
-                            }
-
-                            if (!insideQuote) {
-                                parenNesting--;
-
-                                if (parenNesting < 0)
-                                    throw new SqlSyntaxException();
-
-                                if (parenNesting == 0)
-                                    state = CTESearchState.SEARCH_ADDITIONAL;
-                            }
-                            break;
-                        case '\'':
-                            insideQuote = !insideQuote;
-                            break;
-                    }
-                    break;
-            }
+                reader.skipBalancedParens();
+                first = false;
+            } else
+                return rest;
         }
 
         throw new SqlSyntaxException();
@@ -225,7 +185,7 @@ public final class SqlUtils {
     @NotNull
     private static String normalizeAlias(@NotNull String alias) {
         if ((alias.startsWith("\"") && alias.endsWith("\"")) || (alias.startsWith("[") && alias.endsWith("]")))
-            return alias.substring(1, alias.length()-1);
+            return alias.substring(1, alias.length() - 1);
         else
             return alias;
     }
