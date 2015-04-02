@@ -189,6 +189,11 @@ public class SqlUtilsTest {
         assertThat(selectVariables("with \ntemp as (select \n42)\n select foo, bar, baz from foobar"), is(variables("foo", "bar", "baz")));
     }
 
+    @Test
+    public void parseSelectVariablesWhenCTEWithColumnNames() {
+        assertThat(selectVariables("with temp(foo, bar, quux) as (select 1, 2, 3) select foo, bar, baz from foobar"), is(variables("foo", "bar", "baz")));
+    }
+
     @NotNull
     private static Matcher<List<String>> variables(@NotNull String... variables) {
         return is(asList(variables));

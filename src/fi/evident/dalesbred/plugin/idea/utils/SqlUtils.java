@@ -38,9 +38,9 @@ public final class SqlUtils {
     private static final Pattern RETURNING_PATTERN = Pattern.compile(".+returning\\s+(.+)", CASE_INSENSITIVE);
     private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(\\S+))?", CASE_INSENSITIVE);
     private static final Pattern CTE_PATTERN = Pattern.compile("\\s*with(\\s+recursive)?\\s+(.+)", CASE_INSENSITIVE);
-    private static final Pattern WITH_ITEM_PATTERN = Pattern.compile("\\s*(,\\s*)?(\\S+)\\s+(as)\\s.+", CASE_INSENSITIVE);
+    private static final Pattern WITH_ITEM_PATTERN = Pattern.compile("\\s*(,\\s*)?(\\S+)(\\s*\\(.+\\)|\\s+)\\s*(as)\\s.+", CASE_INSENSITIVE);
     enum SelectListParseState { INITIAL, QUOTED_SINGLE, QUOTED_DOUBLE }
-    enum CTESearchState { SEARCH_FIRST, SEARCH_ADDITIONAL, FOUND_WITH_ITEM }
+    enum CTESearchState { SEARCH_FIRST, SEARCH_ADDITIONAL, FOUND_WITH_ITEM, }
 
     private SqlUtils() {
     }
@@ -163,6 +163,8 @@ public final class SqlUtils {
         // TODO double quotes?
         boolean insideQuote = false;
         int parenNesting = 0;
+        int ignoreColDefinitionParens = 0;
+
 
         for (int i = 0, len = tail.length(); i < len; i++) {
             switch (state) {
@@ -174,6 +176,10 @@ public final class SqlUtils {
                         if (state == CTESearchState.SEARCH_FIRST && withMatcher.group(1) != null)
                             throw new SqlSyntaxException();
 
+                        // check whether table expression has columns
+                        if (withMatcher.group(3) != null && withMatcher.group(3).contains("("))
+                            ignoreColDefinitionParens = 2;
+
                         state = CTESearchState.FOUND_WITH_ITEM;
                     } else
                         return tail.substring(i);
@@ -181,10 +187,20 @@ public final class SqlUtils {
                 case FOUND_WITH_ITEM:
                     switch (tail.charAt(i)) {
                         case '(':
+                            if(ignoreColDefinitionParens > 0) {
+                                ignoreColDefinitionParens--;
+                                break;
+                            }
+
                             if (!insideQuote)
                                 parenNesting++;
                             break;
                         case ')':
+                            if(ignoreColDefinitionParens > 0) {
+                                ignoreColDefinitionParens--;
+                                break;
+                            }
+
                             if (!insideQuote) {
                                 parenNesting--;
 

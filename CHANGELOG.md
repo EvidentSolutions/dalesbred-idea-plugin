@@ -1,6 +1,10 @@
+## 0.2.8 (2015-04-02)
+
+- Support for CTE column definitions.
+
 ## 0.2.7 (2015-04-02)
 
-- Support analyzing common table expressions.</li>
+- Support analyzing common table expressions.
 
 ## 0.2.6 (2015-03-27)
 
