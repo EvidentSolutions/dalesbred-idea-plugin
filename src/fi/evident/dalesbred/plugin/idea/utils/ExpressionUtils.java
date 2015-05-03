@@ -35,8 +35,13 @@ import java.util.Set;
 import static com.intellij.psi.impl.JavaConstantExpressionEvaluator.computeConstantExpression;
 import static com.intellij.psi.util.PropertyUtil.getPropertyNameBySetter;
 import static com.intellij.psi.util.PropertyUtil.isSimplePropertySetter;
+import static java.util.Arrays.asList;
 
 public final class ExpressionUtils {
+
+    @NotNull
+    private static final List<String> IGNORE_ANNOTATIONS =
+        asList("org.dalesbred.annotation.DalesbredIgnore", "fi.evident.dalesbred.DalesbredIgnore");
 
     private ExpressionUtils() {
     }
@@ -132,7 +137,7 @@ public final class ExpressionUtils {
         if (modifierList == null) return false;
 
         for (PsiAnnotation annotation : modifierList.getAnnotations())
-            if ("fi.evident.dalesbred.DalesbredIgnore".equals(annotation.getQualifiedName()))
+            if (IGNORE_ANNOTATIONS.contains(annotation.getQualifiedName()) )
                 return true;
 
         return false;

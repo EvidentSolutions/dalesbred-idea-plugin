@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Evident Solutions Oy
+ * Copyright (c) 2015 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,31 +20,27 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea.inspections;
+import fi.evident.dalesbred.Database;
+import fi.evident.dalesbred.DalesbredIgnore;
 
-import org.jetbrains.annotations.NotNull;
+import java.lang.String;
 
-@SuppressWarnings({"JUnitTestMethodWithNoAssertions", "unchecked"})
-public class DalesbredIncorrectParameterCountInspectionTest extends InspectionTestCase {
+public class IgnoredMembers {
 
-    public void testSimpleCases() {
-        verifyHighlighting("incorrectParameterCount/SimpleCases.java");
+    Database db;
+
+    public void ignoredFieldsAndSetters() {
+        db.findUnique(ClassWithIgnoredProperty.class, "select usedField from foo");
     }
+}
 
-    public void testUpdates() {
-        verifyHighlighting("incorrectParameterCount/Updates.java");
-    }
+class ClassWithIgnoredProperty {
 
-    public void testSimpleCasesLegacy() {
-        verifyHighlighting("incorrectParameterCount/legacy/SimpleCases.java");
-    }
+    public String usedField;
 
-    public void testUpdatesLegacy() {
-        verifyHighlighting("incorrectParameterCount/legacy/Updates.java");
-    }
+    @DalesbredIgnore
+    public String ignoredField;
 
-    private void verifyHighlighting(@NotNull String file) {
-        myFixture.enableInspections(DalesbredIncorrectParameterCountInspection.class);
-        myFixture.testHighlighting(file);
-    }
+    @DalesbredIgnore
+    public void setIgnoredSetter(String s) { }
 }

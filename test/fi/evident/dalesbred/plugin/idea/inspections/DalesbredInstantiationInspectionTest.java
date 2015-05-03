@@ -22,54 +22,77 @@
 
 package fi.evident.dalesbred.plugin.idea.inspections;
 
+import org.jetbrains.annotations.NotNull;
+
 @SuppressWarnings({"JUnitTestMethodWithNoAssertions", "unchecked"})
 public class DalesbredInstantiationInspectionTest extends InspectionTestCase {
 
     public void testSimpleCases() {
-        myFixture.enableInspections(DalesbredInstantiationInspection.class);
-
-        myFixture.testHighlighting("instantiation/SimpleCases.java");
+        verifyHighlighting("instantiation/SimpleCases.java");
     }
 
     public void testConstructorValidation() {
-        myFixture.enableInspections(DalesbredInstantiationInspection.class);
-
-        myFixture.testHighlighting("instantiation/ConstructorValidation.java");
+        verifyHighlighting("instantiation/ConstructorValidation.java");
     }
 
     public void testMapConstruction() {
-        myFixture.enableInspections(DalesbredInstantiationInspection.class);
-
-        myFixture.testHighlighting("instantiation/MapConstruction.java");
+        verifyHighlighting("instantiation/MapConstruction.java");
     }
 
     public void testUpdatesWithReturning() {
-        myFixture.enableInspections(DalesbredInstantiationInspection.class);
-
-        myFixture.testHighlighting("instantiation/UpdatesWithReturning.java");
+        verifyHighlighting("instantiation/UpdatesWithReturning.java");
     }
 
     public void testNonExactPropertyNames() {
-        myFixture.enableInspections(DalesbredInstantiationInspection.class);
-
-        myFixture.testHighlighting("instantiation/NonExactPropertyNames.java");
+        verifyHighlighting("instantiation/NonExactPropertyNames.java");
     }
 
     public void testEnumConstruction() {
-        myFixture.enableInspections(DalesbredInstantiationInspection.class);
-
-        myFixture.testHighlighting("instantiation/EnumConstruction.java");
+        verifyHighlighting("instantiation/EnumConstruction.java");
     }
 
     public void testUninstantiatedProperties() {
-        myFixture.enableInspections(DalesbredInstantiationInspection.class);
-
-        myFixture.testHighlighting("instantiation/UninstantiatedProperties.java");
+        verifyHighlighting("instantiation/UninstantiatedProperties.java");
     }
 
     public void testIgnoredMembers() {
-        myFixture.enableInspections(DalesbredInstantiationInspection.class);
+        verifyHighlighting("instantiation/IgnoredMembers.java");
+    }
+    
+    public void testSimpleCasesLegacy() {
+        verifyHighlighting("instantiation/legacy/SimpleCases.java");
+    }
 
-        myFixture.testHighlighting("instantiation/IgnoredMembers.java");
+    public void testConstructorValidationLegacy() {
+        verifyHighlighting("instantiation/legacy/ConstructorValidation.java");
+    }
+
+    public void testMapConstructionLegacy() {
+        verifyHighlighting("instantiation/legacy/MapConstruction.java");
+    }
+
+    public void testUpdatesWithReturningLegacy() {
+        verifyHighlighting("instantiation/legacy/UpdatesWithReturning.java");
+    }
+
+    public void testNonExactPropertyNamesLegacy() {
+        verifyHighlighting("instantiation/legacy/NonExactPropertyNames.java");
+    }
+
+    public void testEnumConstructionLegacy() {
+        verifyHighlighting("instantiation/legacy/EnumConstruction.java");
+    }
+
+    public void testUninstantiatedPropertiesLegacy() {
+        verifyHighlighting("instantiation/legacy/UninstantiatedProperties.java");
+    }
+
+    public void testIgnoredMembersLegacy() {
+        verifyHighlighting("instantiation/legacy/IgnoredMembers.java");
+    }
+
+    private void verifyHighlighting(@NotNull String file) {
+        myFixture.enableInspections(DalesbredInstantiationInspection.class);
+        myFixture.testHighlighting(file);
     }
 }

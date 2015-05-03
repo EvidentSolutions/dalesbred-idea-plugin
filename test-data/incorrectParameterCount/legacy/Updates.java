@@ -1,7 +1,7 @@
-import org.dalesbred.Database;
-import org.dalesbred.query.SqlQuery;
-import org.dalesbred.result.ResultSetProcessor;
-import org.dalesbred.result.RowMapper;
+import fi.evident.dalesbred.Database;
+import fi.evident.dalesbred.SqlQuery;
+import fi.evident.dalesbred.results.ResultSetProcessor;
+import fi.evident.dalesbred.results.RowMapper;
 
 import java.lang.Integer;
 import java.lang.String;

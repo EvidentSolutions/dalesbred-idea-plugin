@@ -1,4 +1,4 @@
-import org.dalesbred.Database;
+import fi.evident.dalesbred.Database;
 
 import java.lang.String;
 

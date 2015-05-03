@@ -46,20 +46,14 @@ public abstract class InspectionTestCase extends LightCodeInsightFixtureTestCase
         public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
             super.configureModule(module, model, contentEntry);
 
-            model.getModuleExtension(LanguageLevelModuleExtension.class).setLanguageLevel(LanguageLevel.JDK_1_7);
+            model.getModuleExtension(LanguageLevelModuleExtension.class).setLanguageLevel(LanguageLevel.JDK_1_8);
 
             Library library = model.getModuleLibraryTable().createLibrary("dalesbred");
 
             Library.ModifiableModel libraryModel = library.getModifiableModel();
-
-            String jarPath = "libs/dalesbred-0.7.1.jar";
-            VirtualFile jar = JarFileSystem.getInstance().refreshAndFindFileByPath(jarPath + "!/");
-            if (jar != null) {
-                libraryModel.addRoot(jar, OrderRootType.CLASSES);
-                libraryModel.commit();
-            } else {
-                Assert.fail("could not find dalesbred jar at " + jarPath);
-            }
+            addJar(libraryModel, "libs/dalesbred-0.7.1.jar");
+            addJar(libraryModel, "libs/dalesbred-1.0.0-alpha.1.jar");
+            libraryModel.commit();
         }
 
         @Override
@@ -67,6 +61,16 @@ public abstract class InspectionTestCase extends LightCodeInsightFixtureTestCase
             return JavaSdk.getInstance().createJdk("Java", System.getProperty("java.home"));
         }
     };
+
+    private static void addJar(@NotNull Library.ModifiableModel libraryModel, @NotNull String jarPath) {
+        VirtualFile jar = JarFileSystem.getInstance().refreshAndFindFileByPath(jarPath + "!/");
+        if (jar != null) {
+            libraryModel.addRoot(jar, OrderRootType.CLASSES);
+
+        } else {
+            Assert.fail("could not find dalesbred jar at " + jarPath);
+        }
+    }
 
     @Override
     protected String getTestDataPath() {

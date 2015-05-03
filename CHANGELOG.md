@@ -1,3 +1,8 @@
+## x.y.z (yyyy-mm-dd)
+
+- Support for Dalesbred 1.0 (which changed package to org.dalesbred).
+  Old 0.x-versions are still supported as well.
+
 ## 0.2.9 (2015-04-02)
 
 - Improvements in CTE parsing.
