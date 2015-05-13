@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 0.3.0 (2015-05-14)
 
 - Support for Dalesbred 1.0 (which changed package to org.dalesbred).
   Old 0.x-versions are still supported as well.
