@@ -50,6 +50,14 @@ public class SqlUtilsTest {
     }
 
     @Test
+    public void countPlaceholdersWithComments() {
+        assertThat(countQueryParametersPlaceholders("select * -- comment with quote ' \n from foo t where x=?"), is(1));
+        assertThat(countQueryParametersPlaceholders("select * -- comment with placeholder ? \n from foo t where x=?"), is(1));
+        assertThat(countQueryParametersPlaceholders("select * /* comment with quote ' */ from foo t where x=?"), is(1));
+        assertThat(countQueryParametersPlaceholders("select * /* comment with placeholder ? */ from foo t where x=?"), is(1));
+    }
+
+    @Test
     public void parseSimpleSelectVariables() {
         assertThat(selectVariables("select foo from bar"), is(variables("foo")));
         assertThat(selectVariables("SELECT foo, bar, baz FROM foobar"), is(variables("foo", "bar", "baz")));

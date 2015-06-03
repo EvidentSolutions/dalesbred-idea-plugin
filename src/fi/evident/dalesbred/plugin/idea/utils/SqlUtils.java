@@ -191,15 +191,22 @@ public final class SqlUtils {
     }
 
     public static int countQueryParametersPlaceholders(@NotNull String sql) {
-        boolean inLiteral = false;
         int count = 0;
 
-        for (int i = 0, len = sql.length(); i < len; i++) {
-            char ch = sql.charAt(i);
-            if (ch == '\'')
-                inLiteral = !inLiteral;
-            else if (ch == '?' && !inLiteral)
+        SqlReader reader = new SqlReader(sql);
+
+        while (reader.hasMore()) {
+            char ch = reader.readChar();
+
+            if (ch == '?') {
                 count++;
+            } else if (ch == '\'') {
+                reader.skipUntil('\'');
+            } else if (reader.lookingAt("--")) {
+                reader.skipUntil('\n');
+            } else if (reader.lookingAt("/*")) {
+                reader.skipUntil("*/");
+            }
         }
 
         return count;

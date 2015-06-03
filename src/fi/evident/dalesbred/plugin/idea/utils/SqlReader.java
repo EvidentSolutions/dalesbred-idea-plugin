@@ -99,6 +99,17 @@ final class SqlReader {
             index++;
     }
 
+    public void skipUntil(char c) {
+        while (hasMore() && sql.charAt(index++) != c) {
+            // ignore
+        }
+    }
+
+    public void skipUntil(@NotNull String s) {
+        while (hasMore() && !lookingAt(s))
+            index++;
+    }
+
     public void expect(@NotNull String s) throws SqlSyntaxException {
         if (!skipIfLookingAt(s))
             throw new SqlSyntaxException();
