@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/EvidentSolutions/dalesbred-idea-plugin">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
     <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
 
     <description><![CDATA[
@@ -9,6 +9,11 @@
       ]]></description>
 
     <change-notes><![CDATA[
+        <h3>0.3.1 (2015-06-03)</h3>
+        <ul>
+            <li>Handle comments in SQL statements when counting placeholders.</li>
+        </ul>
+
         <h3>0.3.0 (2015-05-14)</h3>
         <ul>
             <li>Support for Dalesbred 1.0 (which changed package to org.dalesbred). Old 0.x-versions are still supported as well.</li>

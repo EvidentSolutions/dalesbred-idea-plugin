@@ -1,3 +1,7 @@
+## 0.3.1 (2015-06-03)
+
+- Handle comments in SQL statements when counting placeholders.
+
 ## 0.3.0 (2015-05-14)
 
 - Support for Dalesbred 1.0 (which changed package to org.dalesbred).
