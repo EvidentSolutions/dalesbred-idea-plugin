@@ -52,7 +52,7 @@ public abstract class InspectionTestCase extends LightCodeInsightFixtureTestCase
 
             Library.ModifiableModel libraryModel = library.getModifiableModel();
             addJar(libraryModel, "libs/dalesbred-0.7.1.jar");
-            addJar(libraryModel, "libs/dalesbred-1.0.0-rc.1.jar");
+            addJar(libraryModel, "libs/dalesbred-1.0.1-SNAPSHOT.jar");
             libraryModel.commit();
         }
 

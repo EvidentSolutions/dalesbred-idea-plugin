@@ -149,6 +149,21 @@ public class DalesbredInstantiationInspection extends BaseJavaLocalInspectionToo
             return (selectCount == 1) ? null : "Instantiating enum requires 1 argument, but got " + selectCount + '.';
         }
 
+        List<PsiMethod> explicitInstantiators = findExplicitInstantiators(type);
+        if (!explicitInstantiators.isEmpty()) {
+            if (explicitInstantiators.size() == 1) {
+                PsiMethod instantiator = explicitInstantiators.get(0);
+                int parameterCount = instantiator.getParameterList().getParametersCount();
+                if (parameterCount == selectCount)
+                    return null;
+                else
+                    return "Instantiator tagged with @DalesbredInstantiator expected " + parameterCount + " parameters, but got " + parameterCount + '.';
+
+            } else {
+                return "Found multiple constructors with @DalesbredInstantiator-annotation.";
+            }
+        }
+
         PsiMethod[] constructors = type.getConstructors();
         if (constructors.length != 0) {
             for (PsiMethod ctor : constructors) {
@@ -176,6 +191,17 @@ public class DalesbredInstantiationInspection extends BaseJavaLocalInspectionToo
         }
 
         return "Could not find a way to construct class with selected values.";
+    }
+
+    @NotNull
+    private static List<PsiMethod> findExplicitInstantiators(@NotNull PsiClass type) {
+        List<PsiMethod> result = new ArrayList<PsiMethod>();
+
+        for (PsiMethod ctor : type.getConstructors())
+            if (isExplicitInstantiator(ctor))
+                result.add(ctor);
+
+        return result;
     }
 
     @Override

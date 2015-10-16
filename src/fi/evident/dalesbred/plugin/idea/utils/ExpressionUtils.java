@@ -43,6 +43,10 @@ public final class ExpressionUtils {
     private static final List<String> IGNORE_ANNOTATIONS =
         asList("org.dalesbred.annotation.DalesbredIgnore", "fi.evident.dalesbred.DalesbredIgnore");
 
+    @NotNull
+    private static final String INSTANTIATOR_ANNOTATION  =
+            "org.dalesbred.annotation.DalesbredInstantiator";
+
     private ExpressionUtils() {
     }
 
@@ -138,6 +142,16 @@ public final class ExpressionUtils {
 
         for (PsiAnnotation annotation : modifierList.getAnnotations())
             if (IGNORE_ANNOTATIONS.contains(annotation.getQualifiedName()) )
+                return true;
+
+        return false;
+    }
+
+    public static boolean isExplicitInstantiator(@NotNull PsiMethod member) {
+        PsiModifierList modifierList = member.getModifierList();
+
+        for (PsiAnnotation annotation : modifierList.getAnnotations())
+            if (INSTANTIATOR_ANNOTATION.equals(annotation.getQualifiedName()))
                 return true;
 
         return false;

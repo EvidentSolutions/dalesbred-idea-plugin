@@ -1,3 +1,7 @@
+## x.y.z (yyyy-mm-dd)
+
+- Support @DalesbredInstantiator in inspections.
+
 ## 0.3.1 (2015-06-03)
 
 - Handle comments in SQL statements when counting placeholders.

@@ -58,7 +58,11 @@ public class DalesbredInstantiationInspectionTest extends InspectionTestCase {
     public void testIgnoredMembers() {
         verifyHighlighting("instantiation/IgnoredMembers.java");
     }
-    
+
+    public void testInstantiatorAnnotation() {
+        verifyHighlighting("instantiation/InstantiatorAnnotation.java");
+    }
+
     public void testSimpleCasesLegacy() {
         verifyHighlighting("instantiation/legacy/SimpleCases.java");
     }
