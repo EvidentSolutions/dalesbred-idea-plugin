@@ -24,6 +24,8 @@ package fi.evident.dalesbred.plugin.idea.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import static java.lang.Character.isLetterOrDigit;
+
 final class SqlReader {
 
     @NotNull
@@ -94,8 +96,24 @@ final class SqlReader {
         }
     }
 
+    public boolean skipIfLookingAtKeyword(@NotNull String s) {
+        if (lookingAt(s)) {
+            int tokenLength = s.length();
+
+            // First verify that our token does not continue
+            if (index + tokenLength < sql.length() && isLetterOrDigit(sql.charAt(index + tokenLength)))
+                return false;
+
+            index += tokenLength;
+            skipSpaces();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void skipName() {
-        while (hasMore() && Character.isLetterOrDigit(sql.charAt(index)))
+        while (hasMore() && isLetterOrDigit(sql.charAt(index)))
             index++;
     }
 
@@ -110,8 +128,8 @@ final class SqlReader {
             index++;
     }
 
-    public void expect(@NotNull String s) throws SqlSyntaxException {
-        if (!skipIfLookingAt(s))
+    public void expectKeyword(@NotNull String s) throws SqlSyntaxException {
+        if (!skipIfLookingAtKeyword(s))
             throw new SqlSyntaxException();
     }
 }

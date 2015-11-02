@@ -202,6 +202,11 @@ public class SqlUtilsTest {
     }
 
     @Test
+    public void subSelects() {
+        assertThat(selectVariables("select foo, (select count(*) from a) as bar, array(select quux from b) as baz from foobar"), is(variables("foo", "bar", "baz")));
+    }
+
+    @Test
     public void cteStripping() throws SqlSyntaxException {
         assertThat(stripCTE(""), is(""));
         assertThat(stripCTE("select * from foo"), is("select * from foo"));
@@ -214,7 +219,9 @@ public class SqlUtilsTest {
 
     @NotNull
     private static String stripCTE(@NotNull String s) throws SqlSyntaxException {
-        return stripCommonTableExpression(s).trim();
+        SqlReader reader = new SqlReader(s);
+        stripCommonTableExpression(reader);
+        return reader.rest();
     }
 
     @NotNull

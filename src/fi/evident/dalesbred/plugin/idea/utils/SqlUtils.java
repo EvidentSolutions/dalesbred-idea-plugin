@@ -34,8 +34,6 @@ import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 public final class SqlUtils {
 
-    private static final Pattern SELECT_LIST_PATTERN = Pattern.compile("\\s*select\\s+((all|distinct(\\s+on\\s*(\\(.*?\\)))?)\\s+)?(.+?)(\\s+from.+|\\s*)?", CASE_INSENSITIVE);
-    private static final Pattern RETURNING_PATTERN = Pattern.compile(".+returning\\s+(.+)", CASE_INSENSITIVE);
     private static final Pattern SELECT_ITEM_PATTERN = Pattern.compile("(.+\\.)?(.+?)(\\s+(as\\s+)?(\\S+))?", CASE_INSENSITIVE);
 
     enum SelectListParseState {INITIAL, QUOTED_SINGLE, QUOTED_DOUBLE}
@@ -46,8 +44,7 @@ public final class SqlUtils {
     @NotNull
     public static List<String> selectVariables(@NotNull String sql) {
         try {
-            String selectList = selectList(sql.replace('\r', ' ').replace('\n', ' '));
-            return parseSelectList(selectList);
+            return selectList(sql.replace('\r', ' ').replace('\n', ' '));
 
         } catch (SqlSyntaxException ignored) {
             return Collections.emptyList();
@@ -55,23 +52,57 @@ public final class SqlUtils {
     }
 
     @NotNull
-    private static List<String> parseSelectList(@NotNull String selectList) throws SqlSyntaxException {
+    private static List<String> selectList(@NotNull String sql) throws SqlSyntaxException {
+        SqlReader reader = new SqlReader(sql);
+        stripCommonTableExpression(reader);
+
+        if (reader.skipIfLookingAtKeyword("select")) {
+            if (reader.skipIfLookingAtKeyword("all")) {
+                // nada
+            } else if (reader.skipIfLookingAtKeyword("distinct")) {
+                if (reader.skipIfLookingAtKeyword("on")) {
+                    reader.skipBalancedParens();
+                    reader.skipSpaces();
+                }
+            }
+
+            return parseSelectList(reader);
+
+        } else {
+            while (reader.hasMore()) {
+                reader.skipUntil("returning");
+                if (reader.skipIfLookingAtKeyword("returning"))
+                    return parseSelectList(reader);
+            }
+        }
+
+        throw new SqlSyntaxException();
+    }
+
+    @NotNull
+    private static List<String> parseSelectList(@NotNull SqlReader reader) throws SqlSyntaxException {
         SelectListParseState state = SelectListParseState.INITIAL;
         List<String> result = new ArrayList<String>();
-        int currentStart = 0;
         int parenNesting = 0;
         int bracketNesting = 0;
 
-        for (int i = 0, len = selectList.length(); i < len; i++) {
-            char ch = selectList.charAt(i);
+        StringBuilder current = new StringBuilder();
+
+        while (reader.hasMore()) {
+            if (reader.skipIfLookingAtKeyword("from") && parenNesting == 0 && bracketNesting == 0)
+                break;
+
+            char ch = reader.readChar();
+            current.append(ch);
 
             switch (state) {
                 case INITIAL:
                     switch (ch) {
                         case ',':
                             if (parenNesting == 0 && bracketNesting == 0) {
-                                result.add(parseSelectItem(selectList.substring(currentStart, i).trim()));
-                                currentStart = i + 1;
+                                current.setLength(current.length() - 1); // remove trailing comma
+                                result.add(parseSelectItem(current.toString().trim()));
+                                current.setLength(0);
                             }
                             break;
                         case '(':
@@ -109,25 +140,10 @@ public final class SqlUtils {
             }
         }
 
-        if (currentStart < selectList.length())
-            result.add(parseSelectItem(selectList.substring(currentStart).trim()));
+        if (current.length() != 0)
+            result.add(parseSelectItem(current.toString().trim()));
 
         return result;
-    }
-
-    @NotNull
-    private static String selectList(@NotNull String sql) throws SqlSyntaxException {
-        String normalized = normalizeQuery(sql);
-
-        Matcher m1 = SELECT_LIST_PATTERN.matcher(normalized);
-        if (m1.matches())
-            return m1.group(5);
-
-        Matcher m2 = RETURNING_PATTERN.matcher(normalized);
-        if (m2.matches())
-            return m2.group(1);
-
-        throw new SqlSyntaxException();
     }
 
     @NotNull
@@ -142,28 +158,20 @@ public final class SqlUtils {
         return normalizeAlias(matcher.group(2));
     }
 
-    @NotNull
-    private static String normalizeQuery(@NotNull String sql) throws SqlSyntaxException {
-        return stripCommonTableExpression(sql);
-    }
-
-    @NotNull
-    static String stripCommonTableExpression(@NotNull String sql) throws SqlSyntaxException {
-        SqlReader reader = new SqlReader(sql);
+    static void stripCommonTableExpression(@NotNull SqlReader reader) throws SqlSyntaxException {
         reader.skipSpaces();
 
-        if (!reader.skipIfLookingAt("with"))
-            return sql;
+        if (!reader.skipIfLookingAtKeyword("with"))
+            return;
 
-        reader.skipSpaces();
-        reader.skipIfLookingAt("recursive");
+        reader.skipIfLookingAtKeyword("recursive");
 
         skipWithItem(reader);
 
         while (reader.skipIfLookingAt(","))
             skipWithItem(reader);
 
-        return reader.rest();
+        reader.skipSpaces();
     }
 
     private static void skipWithItem(@NotNull SqlReader reader) throws SqlSyntaxException {
@@ -176,8 +184,7 @@ public final class SqlUtils {
             reader.skipSpaces();
         }
 
-        reader.expect("as");
-        reader.skipSpaces();
+        reader.expectKeyword("as");
 
         reader.skipBalancedParens();
     }
