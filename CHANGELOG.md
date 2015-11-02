@@ -1,6 +1,7 @@
 ## x.y.z (yyyy-mm-dd)
 
 - Support @DalesbredInstantiator in inspections.
+- Improvements to parsing select lists with sub-selects.
 
 ## 0.3.1 (2015-06-03)
 
