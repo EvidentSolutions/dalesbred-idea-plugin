@@ -29,6 +29,7 @@
     <inspection_tool class="AlphaUnsortedPropertiesFile" enabled="false" level="INFO" enabled_by_default="false" />
     <inspection_tool class="AmbiguousFieldAccess" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AmbiguousMethodCall" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AmdModulesDependencies" enabled="false" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="AndroidDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="AndroidElementNotAllowed" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AndroidLintAaptCrash" enabled="false" level="ERROR" enabled_by_default="true" />
@@ -733,6 +734,8 @@
     <inspection_tool class="DeprecatedDefenderSyntax" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DeprecatedFacadeUsage" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DeprecatedGemInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="DeprecatedObjectInstanceFieldReference" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DeprecatedUsageOfStaticField" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="Deprecation" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DeserializableClassInSecureContext" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DesignForExtension" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -852,6 +855,7 @@
     <inspection_tool class="EqualsBetweenInconvertibleTypes" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EqualsCalledOnEnumConstant" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EqualsHashCodeCalledOnUrl" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EqualsOrHashCode" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EqualsReplaceableByObjectsCall" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="EqualsUsesNonFinalVariable" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EqualsWhichDoesntCheckParameterClass" enabled="true" level="WARNING" enabled_by_default="true" />
