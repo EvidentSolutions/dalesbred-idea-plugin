@@ -1,7 +1,5 @@
 import org.dalesbred.Database;
 
-import java.lang.String;
-
 public class SimpleCases {
 
     Database db;
@@ -32,6 +30,7 @@ public class SimpleCases {
         db.findUniqueOrNull(String.class, <warning descr="Can't verify construction when select list contains '*'.">"select * from foo"</warning>);
         db.findUniqueInt(<warning descr="Can't verify construction when select list contains '*'.">"select * from foo"</warning>);
         db.findUniqueLong(<warning descr="Can't verify construction when select list contains '*'.">"select * from foo"</warning>);
+        db.findOptional(String.class, <warning descr="Can't verify construction when select list contains '*'.">"select * from foo"</warning>);
     }
 
     public void findUniquePrimitiveWithMultipleSelectValues() {

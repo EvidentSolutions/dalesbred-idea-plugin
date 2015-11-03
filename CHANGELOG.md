@@ -2,6 +2,7 @@
 
 - Support @DalesbredInstantiator in inspections.
 - Improvements to parsing select lists with sub-selects.
+- Support analyzing findOptional.
 
 ## 0.3.1 (2015-06-03)
 

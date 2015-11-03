@@ -3,9 +3,6 @@ import org.dalesbred.query.SqlQuery;
 import org.dalesbred.result.ResultSetProcessor;
 import org.dalesbred.result.RowMapper;
 
-import java.lang.Integer;
-import java.lang.String;
-
 public class SimpleCases {
 
     Database db;
@@ -63,6 +60,18 @@ public class SimpleCases {
         db.findUniqueOrNull(rowMapper, "select a from foo where id=?", 4);
         db.findUniqueOrNull(rowMapper, <warning>"select a from foo where id=?"</warning>);
         db.findUniqueOrNull(rowMapper, <warning>"select a from foo where id=?"</warning>, 4, 4);
+    }
+    
+    public void findOptionalClass() {
+        db.findOptional(String.class, "select a from foo where id=?", 4);
+        db.findOptional(String.class, <warning>"select a from foo where id=?"</warning>);
+        db.findOptional(String.class, <warning>"select a from foo where id=?"</warning>, 4, 4);
+    }
+
+    public void findOptionalRowMapper() {
+        db.findOptional(rowMapper, "select a from foo where id=?", 4);
+        db.findOptional(rowMapper, <warning>"select a from foo where id=?"</warning>);
+        db.findOptional(rowMapper, <warning>"select a from foo where id=?"</warning>, 4, 4);
     }
 
     public void findUniqueInt() {

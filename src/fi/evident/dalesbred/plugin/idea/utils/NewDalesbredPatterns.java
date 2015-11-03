@@ -47,7 +47,7 @@ final class NewDalesbredPatterns {
     @NotNull
     @SuppressWarnings("unchecked")
     public static ElementPattern<PsiMethod> findMethod() {
-        return or(findTableMethod(), findUniqueMethod(), findUniquePrimitiveMethod(), findAllMethod(), findMapMethod());
+        return or(findTableMethod(), findUniqueMethod(), findUniquePrimitiveMethod(), findOptionalMethod(), findAllMethod(), findMapMethod());
     }
 
     @NotNull
@@ -92,6 +92,15 @@ final class NewDalesbredPatterns {
                 databaseMethod(namePattern).withParameters(CLASS_CLASS_NAME, SQL_QUERY_CLASS_NAME),
                 databaseMethod(namePattern).withParameters(ROW_MAPPER_CLASS_NAME, STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
                 databaseMethod(namePattern).withParameters(ROW_MAPPER_CLASS_NAME, SQL_QUERY_CLASS_NAME));
+    }
+
+    @NotNull
+    private static ElementPattern<PsiMethod> findOptionalMethod() {
+        return or(
+                databaseMethod("findOptional").withParameters(CLASS_CLASS_NAME, STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod("findOptional").withParameters(CLASS_CLASS_NAME, SQL_QUERY_CLASS_NAME),
+                databaseMethod("findOptional").withParameters(ROW_MAPPER_CLASS_NAME, STRING_CLASS_NAME, OBJECT_ARGS_CLASS_NAME),
+                databaseMethod("findOptional").withParameters(ROW_MAPPER_CLASS_NAME, SQL_QUERY_CLASS_NAME));
     }
 
     @NotNull
