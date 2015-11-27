@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 0.4.0 (2015-11-27)
 
 - Support @DalesbredInstantiator in inspections.
 - Improvements to parsing select lists with sub-selects.

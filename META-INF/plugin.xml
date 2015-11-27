@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/EvidentSolutions/dalesbred-idea-plugin">
     <id>fi.evident.dalesbred.plugin.idea</id>
     <name>Dalesbred</name>
-    <version>0.3.1</version>
+    <version>0.4.0</version>
     <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
 
     <description><![CDATA[
@@ -9,6 +9,13 @@
       ]]></description>
 
     <change-notes><![CDATA[
+        <h3>0.4.0 (2015-11-27)</h3>
+        <ul>
+            <li>Support @DalesbredInstantiator in inspections.</li>
+            <li>Improvements to parsing select lists with sub-selects.</li>
+            <li>Support analyzing findOptional.</li>
+        </ul>
+
         <h3>0.3.1 (2015-06-03)</h3>
         <ul>
             <li>Handle comments in SQL statements when counting placeholders.</li>
