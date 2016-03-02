@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Evident Solutions Oy
+ * Copyright (c) 2016 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,14 +20,6 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea.inspections;
+package fi.evident.dalesbred.plugin.idea.utils
 
-@SuppressWarnings({"JUnitTestMethodWithNoAssertions", "unchecked"})
-public class RegressionsTest extends InspectionTestCase {
-
-    public void testFindPrimitive() {
-        myFixture.enableInspections(DalesbredInstantiationInspection.class);
-
-        myFixture.testHighlighting("regressions/FindPrimitive.java");
-    }
-}
+class SqlSyntaxException : Exception()

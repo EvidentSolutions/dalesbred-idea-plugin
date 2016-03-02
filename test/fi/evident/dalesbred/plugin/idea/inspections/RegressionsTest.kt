@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Evident Solutions Oy
+ * Copyright (c) 2016 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,31 +20,13 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea.inspections;
+package fi.evident.dalesbred.plugin.idea.inspections
 
-import org.jetbrains.annotations.NotNull;
+class RegressionsTest : InspectionTestCase() {
 
-@SuppressWarnings({"JUnitTestMethodWithNoAssertions", "unchecked"})
-public class DalesbredIncorrectParameterCountInspectionTest extends InspectionTestCase {
+    fun testFindPrimitive() {
+        myFixture.enableInspections(DalesbredInstantiationInspection::class.java)
 
-    public void testSimpleCases() {
-        verifyHighlighting("incorrectParameterCount/SimpleCases.java");
-    }
-
-    public void testUpdates() {
-        verifyHighlighting("incorrectParameterCount/Updates.java");
-    }
-
-    public void testSimpleCasesLegacy() {
-        verifyHighlighting("incorrectParameterCount/legacy/SimpleCases.java");
-    }
-
-    public void testUpdatesLegacy() {
-        verifyHighlighting("incorrectParameterCount/legacy/Updates.java");
-    }
-
-    private void verifyHighlighting(@NotNull String file) {
-        myFixture.enableInspections(DalesbredIncorrectParameterCountInspection.class);
-        myFixture.testHighlighting(file);
+        myFixture.testHighlighting("regressions/FindPrimitive.java")
     }
 }

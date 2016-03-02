@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Evident Solutions Oy
+ * Copyright (c) 2016 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,28 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.plugin.idea.utils;
+package fi.evident.dalesbred.plugin.idea.inspections
 
-public class SqlSyntaxException extends Exception {
+class DalesbredIncorrectParameterCountInspectionTest : InspectionTestCase() {
+
+    fun testSimpleCases() {
+        verifyHighlighting("incorrectParameterCount/SimpleCases.java")
+    }
+
+    fun testUpdates() {
+        verifyHighlighting("incorrectParameterCount/Updates.java")
+    }
+
+    fun testSimpleCasesLegacy() {
+        verifyHighlighting("incorrectParameterCount/legacy/SimpleCases.java")
+    }
+
+    fun testUpdatesLegacy() {
+        verifyHighlighting("incorrectParameterCount/legacy/Updates.java")
+    }
+
+    private fun verifyHighlighting(file: String) {
+        myFixture.enableInspections(DalesbredIncorrectParameterCountInspection::class.java)
+        myFixture.testHighlighting(file)
+    }
 }
