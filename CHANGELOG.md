@@ -1,3 +1,10 @@
+## 0.5.0 (2016-06-01)
+
+- Don't warn about instantiation of types specially supported by Dalesbred
+- Fix exception when parsing SQL with incomplete aliases
+- Require IDEA 2016
+- Port code to Kotlin
+
 ## 0.4.0 (2015-11-27)
 
 - Support @DalesbredInstantiator in inspections.
