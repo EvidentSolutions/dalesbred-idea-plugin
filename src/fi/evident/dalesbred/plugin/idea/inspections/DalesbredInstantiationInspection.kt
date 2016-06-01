@@ -68,7 +68,7 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
         if (parameters.size < 2) return
 
         val resultType = resolveType(parameters[0])
-        if (resultType != null && resultType.qualifiedName !in allowedTypes) {
+        if (resultType != null && !isAllowed(resultType.qualifiedName)) {
             if (resultType.isUninstantiable()) {
                 holder.registerProblem(parameters[0], "Class is not instantiable.")
             } else {
@@ -84,6 +84,13 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
             }
         }
     }
+
+    /**
+     * Is this type-name allowed either because Dalesbred has special support for it
+     * or user has added it to the list of allowed types?
+     */
+    private fun isAllowed(name: String?) =
+        name in allowedTypes || name in BUILTIN_ALLOWED_TYPES
 
     private fun verifyFindMap(parameters: Array<PsiExpression>, holder: ProblemsHolder) {
         if (parameters.size < 3) return
@@ -103,7 +110,7 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
 
     private fun verifyParameterIsInstantiable(parameter: PsiExpression, holder: ProblemsHolder) {
         val cl = resolveType(parameter)
-        if (cl != null && cl.qualifiedName !in allowedTypes && cl.isUninstantiable())
+        if (cl != null && !isAllowed(cl.qualifiedName) && cl.isUninstantiable())
             holder.registerProblem(parameter, "Class is not instantiable.")
     }
 
@@ -114,6 +121,20 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
     }
 
     companion object {
+
+        private val BUILTIN_ALLOWED_TYPES = listOf(
+                "java.io.InputStream",
+                "java.io.Reader",
+                "java.sql.Blob",
+                "java.sql.Clob",
+                "java.sql.SQLXML",
+                "java.time.Instant",
+                "java.time.LocalDate",
+                "java.time.LocalDateTime",
+                "java.time.LocalTime",
+                "java.time.ZoneId",
+                "java.util.TimeZone",
+                "org.w3c.dom.Document")
 
         private val FIND_METHOD_CALL = psiExpression().methodCall(findMethod())
 

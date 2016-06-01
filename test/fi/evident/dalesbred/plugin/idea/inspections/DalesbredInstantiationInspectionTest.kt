@@ -60,6 +60,10 @@ class DalesbredInstantiationInspectionTest : InspectionTestCase() {
         verifyHighlighting("instantiation/InstantiatorAnnotation.java")
     }
 
+    fun testDefaultInstantiable() {
+        verifyHighlighting("instantiation/DefaultInstantiable.java")
+    }
+
     fun testSimpleCasesLegacy() {
         verifyHighlighting("instantiation/legacy/SimpleCases.java")
     }
