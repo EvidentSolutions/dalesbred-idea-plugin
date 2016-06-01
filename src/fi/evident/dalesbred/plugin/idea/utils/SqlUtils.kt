@@ -155,11 +155,17 @@ private fun skipWithItem(reader: SqlReader) {
     reader.skipBalancedParens()
 }
 
-private fun normalizeAlias(alias: String): String =
-    if (alias.startsWith("\"") && alias.endsWith("\"") || alias.startsWith("[") && alias.endsWith("]"))
+fun normalizeAlias(alias: String): String {
+    val al = if ((alias.startsWith("\"") && alias.endsWith("\"") && alias.length >= 2) || (alias.startsWith("[") && alias.endsWith("]")))
         alias.substring(1, alias.length - 1)
     else
         alias
+
+    if (al.isEmpty() || al == "\"")
+        throw SqlSyntaxException()
+
+    return al
+}
 
 fun countQueryParametersPlaceholders(sql: String): Int {
     var count = 0

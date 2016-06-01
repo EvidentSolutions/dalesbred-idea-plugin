@@ -209,6 +209,11 @@ class SqlUtilsTest {
         assertEquals("select * from foo", stripCTE("with temp(baz, quux, xyzzy) as (select * from bar) select * from foo"))
     }
 
+    @Test
+    fun incompleteAlias() {
+        assertEquals(listOf<String>(), selectVariables("select a as \""))
+    }
+
     private fun stripCTE(s: String): String {
         val reader = SqlReader(s)
         stripCommonTableExpression(reader)
