@@ -1,7 +1,7 @@
 Dalesbred Plugin for IDEA
 =========================
 
-Adds [Dalesbred](https://dalesbred.evident.fi)-specific inspections to IntelliJ IDEA.
+Adds [Dalesbred](https://dalesbred.org)-specific inspections to IntelliJ IDEA.
 
 Installation
 ------------
