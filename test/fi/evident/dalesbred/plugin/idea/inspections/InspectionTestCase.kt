@@ -52,8 +52,8 @@ abstract class InspectionTestCase : LightCodeInsightFixtureTestCase() {
                 val library = model.moduleLibraryTable.createLibrary("dalesbred")
 
                 val libraryModel = library.modifiableModel
-                libraryModel.addJar("libs/dalesbred-0.7.1.jar")
-                libraryModel.addJar("libs/dalesbred-1.0.1-SNAPSHOT.jar")
+                libraryModel.addJar("libs/dalesbred-0.8.0.jar")
+                libraryModel.addJar("libs/dalesbred-1.2.2.jar")
                 libraryModel.commit()
             }
 
