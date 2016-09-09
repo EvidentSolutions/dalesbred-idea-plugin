@@ -709,6 +709,7 @@
       <option name="IGNORE_NON_PUBLIC" value="true" />
     </inspection_tool>
     <inspection_tool class="ComponentRegistrationProblems" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="ConcealedApplyCall" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ConditionSignal" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConditionalExpression" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreSimpleAssignmentsAndReturns" value="false" />
@@ -776,6 +777,7 @@
     <inspection_tool class="ConvertAnnotations" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ConvertExpressionToSAM" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConvertJavadoc" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ConvertNullInitializerToUnderscore" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConvertOldAnnotations" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ConvertToStringTemplate" enabled="false" level="INFO" enabled_by_default="true" />
     <inspection_tool class="ConvertibleToMethodValue" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -894,6 +896,7 @@
     <inspection_tool class="DocumentWriteJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DollarSignInName" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DontUsePairConstructor" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DottyDeprecatedWith" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DoubleBraceInitialization" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DoubleCheckedLocking" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreOnVolatileVariables" value="false" />
@@ -1091,6 +1094,7 @@
     </inspection_tool>
     <inspection_tool class="FinalizeNotProtected" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FinallyBlockCannotCompleteNormally" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="FindAndMapToApply" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FindEmptyCheck" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FindIsDefined" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FindNotEqualsNone" enabled="false" level="WARNING" enabled_by_default="true" />
@@ -1825,6 +1829,7 @@
     <inspection_tool class="ManualArrayCopy" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ManualArrayToCollectionCopy" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MapFlatten" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="MapGetGet" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MapGetOrElse" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MapGetOrElseBoolean" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MapGetOrElseFalse" enabled="false" level="WARNING" enabled_by_default="true" />
@@ -2346,6 +2351,7 @@
     <inspection_tool class="RedundantImport" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantMethodOverride" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="RedundantModalityModifier" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="RedundantNewCaseClass" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="RedundantSamConstructor" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="RedundantScopeBinding" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="RedundantSemicolon" enabled="false" level="WARNING" enabled_by_default="true" />
@@ -2382,6 +2388,7 @@
     <inspection_tool class="ReplaceAssignmentWithOperatorAssignmentJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ReplaceGetOrSet" enabled="false" level="INFO" enabled_by_default="true" />
     <inspection_tool class="ReplaceToWithUntil" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ReplaceWithFlatten" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ReplaceWithOperatorAssignment" enabled="false" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="RequiredArtifactTypeInspection" enabled="false" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="RequiredAttributes" enabled="true" level="WARNING" enabled_by_default="true">
@@ -3004,6 +3011,7 @@
       <option name="ignoreParenthesesOnConditionals" value="true" />
       <option name="ignoreParenthesesOnLambdaParameter" value="false" />
     </inspection_tool>
+    <inspection_tool class="UnnecessaryPartialFunction" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryQualifiedReference" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnnecessaryQualifierForThis" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryReturn" enabled="true" level="WARNING" enabled_by_default="true" />
