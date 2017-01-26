@@ -1,0 +1,134 @@
+<!--
+  ~ Copyright (c) 2017 Evident Solutions Oy
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in
+  ~ all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  ~ THE SOFTWARE.
+  -->
+
+<idea-plugin version="2" url="https://github.com/EvidentSolutions/dalesbred-idea-plugin">
+    <id>fi.evident.dalesbred.plugin.idea</id>
+    <name>Dalesbred</name>
+    <version>0.5.0</version>
+    <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
+
+    <description><![CDATA[
+      <a href="http://dalesbred.org">Dalesbred</a> support.
+      ]]></description>
+
+    <change-notes><![CDATA[
+        <h3>0.5.0 (2016-06-01)</h3>
+        <ul>
+            <li>Don't warn about instantiation of types specially supported by Dalesbred</li>
+            <li>Fix exception when parsing SQL with incomplete aliases</li>
+            <li>Require IDEA 2016</li>
+            <li>Port code to Kotlin</li>
+        </ul>
+
+        <h3>0.4.0 (2015-11-27)</h3>
+        <ul>
+            <li>Support @DalesbredInstantiator in inspections.</li>
+            <li>Improvements to parsing select lists with sub-selects.</li>
+            <li>Support analyzing findOptional.</li>
+        </ul>
+
+        <h3>0.3.1 (2015-06-03)</h3>
+        <ul>
+            <li>Handle comments in SQL statements when counting placeholders.</li>
+        </ul>
+
+        <h3>0.3.0 (2015-05-14)</h3>
+        <ul>
+            <li>Support for Dalesbred 1.0 (which changed package to org.dalesbred). Old 0.x-versions are still supported as well.</li>
+        </ul>
+
+        <h3>0.2.9 (2015-04-02)</h3>
+        <ul>
+            <li>Improvements in CTE parsing.</li>
+        </ul>
+
+        <h3>0.2.8 (2015-04-02)</h3>
+        <ul>
+            <li>Support for CTE column definitions.</li>
+        </ul>
+
+        <h3>0.2.7 (2015-04-02)</h3>
+        <ul>
+            <li>Support analyzing common table expressions.</li>
+        </ul>
+
+        <h3>0.2.6 (2015-03-27)</h3>
+        <ul>
+            <li>Support @DalesbredIgnore introduced by Dalesbred 0.7.1.</li>
+        </ul>
+
+        <h3>0.2.5 (2014-10-28)</h3>
+        <ul>
+            <li>Fixed infinite loop when validating find-calls of primitive types.</li>
+            <li>Fixed adding allowed types for instantiation problems -inspection.</li>
+        </ul>
+
+        <h3>0.2.4 (2014-07-07)</h3>
+        <ul>
+            <li>Normalize quoted alias-names when analyzing SQL-queries.</li>
+        </ul>
+
+        <h3>0.2.3 (2014-06-26)</h3>
+        <ul>
+            <li>Support analyzing SQL statements with newlines.</li>
+            <li>Support analyzing new updateAndProcessGeneratedKeys.</li>
+        </ul>
+
+        <h3>0.2.2 (2014-05-26)</h3>
+        <ul>
+            <li>Fixed target bytecode version so that plugin works with JDK 1.6.</li>
+        </ul>
+
+        <h3>0.2.1 (2014-05-23)</h3>
+        <ul>
+            <li>Fixed bugs in select list parsing:
+                <ul>
+                    <li>argument-separating commas in function calls were confused with select-list item separators.</li>
+                    <li>commas inside quoted strings were confused with select-list item separators.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>0.2.0 (2014-01-19)</h3>
+        <ul>
+            <li>Produce warnings about uninitialized properties.</li>
+        </ul>
+      ]]>
+    </change-notes>
+
+    <idea-version since-build="145.0"/>
+
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection displayName="Instantiation problem"
+                         language="JAVA"
+                         groupName="Dalesbred"
+                         enabledByDefault="true"
+                         implementationClass="fi.evident.dalesbred.plugin.idea.inspections.DalesbredInstantiationInspection"/>
+        <localInspection displayName="Invalid amount of parameters"
+                         language="JAVA"
+                         groupName="Dalesbred"
+                         enabledByDefault="true"
+                         implementationClass="fi.evident.dalesbred.plugin.idea.inspections.DalesbredIncorrectParameterCountInspection"/>
+    </extensions>
+</idea-plugin>

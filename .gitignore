@@ -3,4 +3,5 @@ out
 dalesbred-idea-plugin.jar
 .DS_Store
 libs
-
+.gradle
+build

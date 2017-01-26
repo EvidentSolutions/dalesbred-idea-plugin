@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/dalesbred-idea-plugin.iml" filepath="$PROJECT_DIR$/dalesbred-idea-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dalesbred-idea-plugin.iml" filepath="$PROJECT_DIR$/.idea/modules/dalesbred-idea-plugin.iml" />
     </modules>
   </component>
 </project>
