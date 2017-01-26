@@ -28,7 +28,6 @@ buildscript {
     }
 
     dependencies {
-
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -42,7 +41,28 @@ apply plugin: 'kotlin'
 intellij {
     version 'IU-2016.3'
     pluginName 'Dalesbred'
+    updateSinceUntilBuild false
 }
 
 group 'fi.evident.dalesbred.plugin.idea'
 version '0.5.0'
+
+configurations {
+    testLibs
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testLibs 'fi.evident.dalesbred:dalesbred:0.8.0'
+    testLibs 'org.dalesbred:dalesbred:1.2.2'
+}
+
+task downloadTestLibs(type: Copy) {
+    from configurations.testLibs
+    into 'libs/'
+}
+
+test.dependsOn downloadTestLibs
