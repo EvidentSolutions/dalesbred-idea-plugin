@@ -1,0 +1,50 @@
+<idea-plugin version="2" url="https://github.com/EvidentSolutions/dalesbred-idea-plugin">
+    <id>fi.evident.dalesbred.plugin.idea</id>
+    <name>Dalesbred</name>
+    <version>0.5.0</version>
+    <vendor email="juha.komulainen@evident.fi" url="http://www.evident.fi">Evident Solutions</vendor>
+
+    <description><![CDATA[
+      <a href="http://dalesbred.org">Dalesbred</a> support.
+      ]]></description>
+
+    <change-notes><![CDATA[
+        <h3>0.5.1 (2017-01-27)</h3>
+        <ul>
+
+        </ul>
+
+        <h3>0.5.0 (2016-06-01)</h3>
+        <ul>
+            <li>Don't warn about instantiation of types specially supported by Dalesbred</li>
+            <li>Fix exception when parsing SQL with incomplete aliases</li>
+            <li>Require IDEA 2016</li>
+            <li>Port code to Kotlin</li>
+        </ul>
+
+        <h3>0.4.0 (2015-11-27)</h3>
+        <ul>
+            <li>Support @DalesbredInstantiator in inspections.</li>
+            <li>Improvements to parsing select lists with sub-selects.</li>
+            <li>Support analyzing findOptional.</li>
+        </ul>
+      ]]>
+    </change-notes>
+
+    <idea-version since-build="145.0"/>
+
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection displayName="Instantiation problem"
+                         language="JAVA"
+                         groupName="Dalesbred"
+                         enabledByDefault="true"
+                         implementationClass="fi.evident.dalesbred.plugin.idea.inspections.DalesbredInstantiationInspection"/>
+        <localInspection displayName="Invalid amount of parameters"
+                         language="JAVA"
+                         groupName="Dalesbred"
+                         enabledByDefault="true"
+                         implementationClass="fi.evident.dalesbred.plugin.idea.inspections.DalesbredIncorrectParameterCountInspection"/>
+    </extensions>
+</idea-plugin>
