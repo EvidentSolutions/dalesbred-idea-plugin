@@ -79,7 +79,7 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
                     if ("*" in selectItems)
                         holder.registerProblem(parameters[1], "Can't verify construction when select list contains '*'.")
                     else
-                        verifyMatchingConstructor(parameters, holder, resultType, selectItems)
+                        verifyMatchingConstructor(parameters[0], holder, resultType, selectItems)
                 }
             }
         }
@@ -95,16 +95,22 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
     private fun verifyFindMap(parameters: Array<PsiExpression>, holder: ProblemsHolder) {
         if (parameters.size < 3) return
 
-        verifyParameterIsInstantiable(parameters[0], holder)
-        verifyParameterIsInstantiable(parameters[1], holder)
+        val (keyParam, valueParam, sqlParam) = parameters
 
-        val sql = resolveQueryString(parameters[2])
-        if (sql != null) {
-            val selectItems = selectVariables(sql)
-            if ("*" in selectItems)
-                holder.registerProblem(parameters[2], "Can't verify construction when select list contains '*'.")
-            else if (selectItems.size != 2)
-                holder.registerProblem(parameters[2], "Select should return exactly 2 columns.")
+        verifyParameterIsInstantiable(keyParam, holder)
+
+        val valueType = resolveType(valueParam)
+        val selectItems = resolveQueryString(sqlParam)?.let { selectVariables(it) }
+
+        if (valueType != null && !isAllowed(valueType.qualifiedName)) {
+            if (valueType.isUninstantiable()) {
+                holder.registerProblem(valueParam, "Class is not instantiable.")
+            } else if (selectItems != null) {
+                if ("*" in selectItems)
+                    holder.registerProblem(sqlParam, "Can't verify construction when select list contains '*'.")
+                else
+                    verifyMatchingConstructor(valueParam, holder, valueType, selectItems.drop(1))
+            }
         }
     }
 
@@ -152,14 +158,14 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
             }
         }
 
-        private fun verifyMatchingConstructor(parameters: Array<PsiExpression>,
+        private fun verifyMatchingConstructor(parameter: PsiExpression,
                                               holder: ProblemsHolder,
                                               resultType: PsiClass,
                                               selectItems: List<String>) {
 
             val problem = checkConstruction(resultType, selectItems)
             if (problem != null)
-                holder.registerProblem(parameters[0], problem)
+                holder.registerProblem(parameter, problem)
         }
 
         private fun checkConstruction(type: PsiClass, selectItems: List<String>): String? {

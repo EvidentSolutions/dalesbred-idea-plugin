@@ -15,7 +15,11 @@ public class MapConstruction {
     }
 
     public void invalidSelectCount() {
-        db.findMap(String.class, String.class, <warning>"select foo from baz"</warning>);
-        db.findMap(String.class, String.class, <warning>"select foo, bar, baz from foobar"</warning>);
+        db.findMap(String.class, <warning>OneParameterClass.class</warning>, "select foo from baz");
+        db.findMap(String.class, <warning>OneParameterClass.class</warning>, "select foo, bar, baz from foobar");
+    }
+
+    public static class OneParameterClass {
+        public OneParameterClass(int x) { }
     }
 }

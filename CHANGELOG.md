@@ -1,3 +1,7 @@
+## 0.5.1 (2017-01-28)
+        
+- Support `findMap`-calls with values having multiple parameters ([#10](https://github.com/EvidentSolutions/dalesbred-idea-plugin/issues/10))
+         
 ## 0.5.0 (2016-06-01)
 
 - Don't warn about instantiation of types specially supported by Dalesbred
