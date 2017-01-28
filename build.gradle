@@ -19,10 +19,15 @@ apply plugin: 'kotlin'
 intellij {
     version 'IU-2016.3'
     pluginName 'Dalesbred'
-    // updateSinceUntilBuild false
+    updateSinceUntilBuild false
 
     publish {
         pluginId = '7313'
+
+        if (findProperty('ideaPublishUsername') != null) {
+            username = ideaPublishUsername
+            password = ideaPublishPassword
+        }
     }
 }
 
