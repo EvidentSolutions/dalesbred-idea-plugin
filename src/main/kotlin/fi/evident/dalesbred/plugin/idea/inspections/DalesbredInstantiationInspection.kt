@@ -183,7 +183,7 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
                     if (parameterCount == selectCount)
                         return null
                     else
-                        return "Instantiator tagged with @DalesbredInstantiator expected $parameterCount parameters, but got $parameterCount."
+                        return "Instantiator tagged with @DalesbredInstantiator expected $parameterCount parameters, but got $selectCount."
 
                 } else {
                     return "Found multiple constructors with @DalesbredInstantiator-annotation."

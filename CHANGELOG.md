@@ -1,3 +1,7 @@
+## 0.5.2 (2017-01-31)
+
+- Fix inspection message that said "expected n parameters, but got n".
+
 ## 0.5.1 (2017-01-28)
         
 - Support `findMap`-calls with values having multiple parameters ([#10](https://github.com/EvidentSolutions/dalesbred-idea-plugin/issues/10))

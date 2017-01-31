@@ -32,7 +32,7 @@ intellij {
 }
 
 group 'fi.evident.dalesbred.plugin.idea'
-version '0.5.1'
+version '0.5.2'
 
 configurations {
     testLibs
