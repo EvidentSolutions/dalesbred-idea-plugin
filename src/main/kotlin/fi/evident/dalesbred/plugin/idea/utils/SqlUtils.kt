@@ -30,9 +30,9 @@ internal enum class SelectListParseState {
     INITIAL, QUOTED_SINGLE, QUOTED_DOUBLE
 }
 
-fun selectVariables(sql: String): List<String> =
+fun String.selectVariables(): List<String> =
     try {
-        selectList(sql.replace('\r', ' ').replace('\n', ' '))
+        selectList(this.replace('\r', ' ').replace('\n', ' '))
 
     } catch (ignored: SqlSyntaxException) {
         emptyList()

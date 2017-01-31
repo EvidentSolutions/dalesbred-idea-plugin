@@ -228,4 +228,6 @@ class SqlUtilsTest {
     }
 
     private fun variables(vararg variables: String) = variables.asList()
+
+    private fun selectVariables(s: String) = s.selectVariables()
 }

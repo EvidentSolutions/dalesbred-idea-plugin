@@ -33,8 +33,8 @@ private val IGNORE_ANNOTATIONS = listOf("org.dalesbred.annotation.DalesbredIgnor
 
 private val INSTANTIATOR_ANNOTATION = "org.dalesbred.annotation.DalesbredInstantiator"
 
-fun resolveQueryString(parameter: PsiExpression): String? =
-    computeConstantExpression(parameter, false) as? String
+fun PsiExpression.resolveQueryString(): String? =
+    computeConstantExpression(this, false) as? String
 
 fun PsiClass.isUninstantiable() =
     isAnnotationType || isInterface || isNonStaticInnerClass || hasModifierProperty(ABSTRACT) || allConstructorsAreInaccessible

@@ -30,35 +30,32 @@ import fi.evident.dalesbred.plugin.idea.ui.ClassList.createClassesListControl
 import fi.evident.dalesbred.plugin.idea.utils.*
 import java.awt.BorderLayout
 import java.util.*
-import javax.swing.JComponent
 import javax.swing.JPanel
 
 class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
 
     var allowedTypes: MutableList<String> = ArrayList()
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : JavaElementVisitor() {
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : JavaElementVisitor() {
 
-            override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
-                if (FIND_METHOD_CALL.accepts(expression)) {
-                    val parameters = expression.argumentList.expressions
+        override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
+            if (FIND_METHOD_CALL.accepts(expression)) {
+                val parameters = expression.argumentList.expressions
 
-                    when (expression.methodExpression.referenceName) {
-                        "findMap" ->
-                            verifyFindMap(parameters, holder)
+                when (expression.methodExpression.referenceName) {
+                    "findMap" ->
+                        verifyFindMap(parameters, holder)
 
-                        "findTable" -> {
-                            // Nothing
-                        }
-
-                        "findUniqueInt",
-                        "findUniqueLong" ->
-                            verifyUniquePrimitive(parameters, holder)
-
-                        else ->
-                            verifyFind(parameters, holder)
+                    "findTable" -> {
+                        // Nothing
                     }
+
+                    "findUniqueInt",
+                    "findUniqueLong" ->
+                        verifyUniquePrimitive(parameters, holder)
+
+                    else ->
+                        verifyFind(parameters, holder)
                 }
             }
         }
@@ -72,10 +69,8 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
             if (resultType.isUninstantiable()) {
                 holder.registerProblem(parameters[0], "Class is not instantiable.")
             } else {
-                val sql = resolveQueryString(parameters[1])
-                if (sql != null) {
-                    val selectItems = selectVariables(sql)
-
+                val selectItems = parameters[1].resolveQueryString()?.selectVariables()
+                if (selectItems != null) {
                     if ("*" in selectItems)
                         holder.registerProblem(parameters[1], "Can't verify construction when select list contains '*'.")
                     else
@@ -100,7 +95,7 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
         verifyParameterIsInstantiable(keyParam, holder)
 
         val valueType = resolveType(valueParam)
-        val selectItems = resolveQueryString(sqlParam)?.let { selectVariables(it) }
+        val selectItems = sqlParam.resolveQueryString()?.selectVariables()
 
         if (valueType != null && !isAllowed(valueType.qualifiedName)) {
             if (valueType.isUninstantiable()) {
@@ -120,10 +115,8 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
             holder.registerProblem(parameter, "Class is not instantiable.")
     }
 
-    override fun createOptionsPanel(): JComponent? {
-        val panel = JPanel(BorderLayout())
-        panel.add(createClassesListControl(allowedTypes, "Allowed types"), BorderLayout.CENTER)
-        return panel
+    override fun createOptionsPanel() = JPanel(BorderLayout()).apply {
+        add(createClassesListControl(allowedTypes, "Allowed types"), BorderLayout.CENTER)
     }
 
     companion object {
@@ -147,10 +140,8 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
         private fun verifyUniquePrimitive(parameters: Array<PsiExpression>, holder: ProblemsHolder) {
             if (parameters.size == 0) return
 
-            val sql = resolveQueryString(parameters[0])
-            if (sql != null) {
-                val selectItems = selectVariables(sql)
-
+            val selectItems = parameters[0].resolveQueryString()?.selectVariables()
+            if (selectItems != null) {
                 if ("*" in selectItems)
                     holder.registerProblem(parameters[0], "Can't verify construction when select list contains '*'.")
                 else if (selectItems.size != 1)
@@ -175,19 +166,16 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
                 return if (selectCount == 1) null else "Instantiating enum requires 1 argument, but got $selectCount."
             }
 
-            val explicitInstantiators = findExplicitInstantiators(type)
-            if (!explicitInstantiators.isEmpty()) {
-                if (explicitInstantiators.size == 1) {
-                    val instantiator = explicitInstantiators[0]
-                    val parameterCount = instantiator.parameterList.parametersCount
-                    if (parameterCount == selectCount)
-                        return null
-                    else
-                        return "Instantiator tagged with @DalesbredInstantiator expected $parameterCount parameters, but got $selectCount."
+            val explicitInstantiators = type.findExplicitInstantiators()
+            if (explicitInstantiators.size == 1) {
+                val parameterCount = explicitInstantiators[0].parameterList.parametersCount
+                if (parameterCount == selectCount)
+                    return null
+                else
+                    return "Instantiator tagged with @DalesbredInstantiator expected $parameterCount parameters, but got $selectCount."
 
-                } else {
-                    return "Found multiple constructors with @DalesbredInstantiator-annotation."
-                }
+            } else if (explicitInstantiators.isNotEmpty()) {
+                return "Found multiple constructors with @DalesbredInstantiator-annotation."
             }
 
             val constructors = type.constructors
@@ -209,8 +197,8 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
 
             return "Could not find a way to construct class with selected values."
         }
-
-        private fun findExplicitInstantiators(type: PsiClass) =
-            type.constructors.filter { it.isExplicitInstantiator }
     }
 }
+
+private fun PsiClass.findExplicitInstantiators() =
+        constructors.filter { it.isExplicitInstantiator }

@@ -27,40 +27,37 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.patterns.PsiJavaPatterns.psiExpression
 import com.intellij.patterns.StandardPatterns.or
 import com.intellij.psi.JavaElementVisitor
-import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.PsiMethodCallExpression
 import fi.evident.dalesbred.plugin.idea.utils.*
 
 class DalesbredIncorrectParameterCountInspection : BaseJavaLocalInspectionTool() {
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : JavaElementVisitor() {
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : JavaElementVisitor() {
 
-            override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
-                val parameters = expression.argumentList.expressions
-                when {
-                    FIND_METHOD_CALL.accepts(expression) ->
-                        when (expression.methodExpression.referenceName ?: return) {
-                            "findMap" ->
-                                verifyQueryParameterCount(parameters, 2, holder)
-                            "findTable",
-                            "findUniqueInt",
-                            "findUniqueLong" ->
-                                verifyQueryParameterCount(parameters, 0, holder)
-                            else ->
-                                verifyQueryParameterCount(parameters, 1, holder)
-                        }
+        override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
+            val parameters = expression.argumentList.expressions
+            when {
+                FIND_METHOD_CALL.accepts(expression) ->
+                    when (expression.methodExpression.referenceName ?: return) {
+                        "findMap" ->
+                            verifyQueryParameterCount(parameters, 2, holder)
+                        "findTable",
+                        "findUniqueInt",
+                        "findUniqueLong" ->
+                            verifyQueryParameterCount(parameters, 0, holder)
+                        else ->
+                            verifyQueryParameterCount(parameters, 1, holder)
+                    }
 
-                    SQL_QUERY_METHOD_CALL.accepts(expression) ->
-                        verifyQueryParameterCount(parameters, 0, holder)
+                SQL_QUERY_METHOD_CALL.accepts(expression) ->
+                    verifyQueryParameterCount(parameters, 0, holder)
 
-                    UPDATE_METHOD_CALL.accepts(expression) ->
-                        verifyQueryParameterCount(parameters, 0, holder)
+                UPDATE_METHOD_CALL.accepts(expression) ->
+                    verifyQueryParameterCount(parameters, 0, holder)
 
-                    UPDATE_AND_PROCESS_GENERATED_KEYS_METHOD_CALL.accepts(expression) ->
-                        verifyQueryParameterCount(parameters, 1, holder)
-                }
+                UPDATE_AND_PROCESS_GENERATED_KEYS_METHOD_CALL.accepts(expression) ->
+                    verifyQueryParameterCount(parameters, 1, holder)
             }
         }
     }
@@ -76,7 +73,7 @@ class DalesbredIncorrectParameterCountInspection : BaseJavaLocalInspectionTool()
             if (queryIndex >= parameters.size) return
 
             val queryParameter = parameters[queryIndex]
-            val sql = resolveQueryString(queryParameter)
+            val sql = queryParameter.resolveQueryString()
             if (sql != null) {
                 val expected = countQueryParametersPlaceholders(sql)
 

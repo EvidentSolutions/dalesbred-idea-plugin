@@ -26,6 +26,7 @@ import com.intellij.ide.DataManager
 import com.intellij.ide.util.ClassFilter
 import com.intellij.ide.util.TreeClassChooserFactory
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vcs.ComparableComparator
 import com.intellij.psi.search.GlobalSearchScope
@@ -73,10 +74,9 @@ object ClassList {
     private fun createListWithActions(list: JList<*>, listModel: SortedListModel<String>): ToolbarDecorator {
         val decorator = ToolbarDecorator.createDecorator(list)
         decorator.setAddAction {
-            var project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(list))
-            if (project == null)
-                project = ProjectManager.getInstance().defaultProject
-            val chooser = TreeClassChooserFactory.getInstance(project).createWithInnerClassesScopeChooser("Class", GlobalSearchScope.allScope(project), ClassFilter.ALL, null)
+            val project = list.resolveProject()
+            val treeClassChooserFactory = TreeClassChooserFactory.getInstance(project)
+            val chooser = treeClassChooserFactory.createWithInnerClassesScopeChooser("Class", GlobalSearchScope.allScope(project), ClassFilter.ALL, null)
             chooser.showDialog()
             val selected = chooser.selected
             if (selected != null)
@@ -86,4 +86,9 @@ object ClassList {
         decorator.disableUpDownActions()
         return decorator
     }
+}
+
+private fun JList<*>.resolveProject(): Project {
+    val dataContext = DataManager.getInstance().getDataContext(this)
+    return CommonDataKeys.PROJECT.getData(dataContext) ?: ProjectManager.getInstance().defaultProject
 }
