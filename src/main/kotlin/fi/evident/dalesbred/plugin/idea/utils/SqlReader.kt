@@ -89,7 +89,7 @@ internal class SqlReader(private val sql: String) {
         }
 
     fun skipName() {
-        while (hasMore() && sql[index].isLetterOrDigit())
+        while (hasMore() && sql[index].isNameCharacter())
             index++
     }
 
@@ -109,3 +109,5 @@ internal class SqlReader(private val sql: String) {
             throw SqlSyntaxException()
     }
 }
+
+private fun Char.isNameCharacter() = isLetterOrDigit() || this == '_'

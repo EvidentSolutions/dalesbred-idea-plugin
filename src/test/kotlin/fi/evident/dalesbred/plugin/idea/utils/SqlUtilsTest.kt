@@ -174,6 +174,13 @@ class SqlUtilsTest {
     }
 
     @Test
+    fun cteNameWithUnderscores() {
+        assertEquals(variables("foo", "bar"), selectVariables("""
+                WITH name_with_underscores AS (select foo, bar from baz)
+                SELECT foo, bar FROM name_with_underscores"""))
+    }
+
+    @Test
     fun parseSelectVariablesWhenCTEWithEscapedParentheses() {
         assertEquals(variables("foo", "bar", "baz"), selectVariables("with temp1 as (select '(') select foo, bar, baz from foobar"))
     }

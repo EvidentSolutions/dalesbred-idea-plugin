@@ -1,3 +1,7 @@
+## Unreleased
+
+- Fix parsing common table expression with underscores
+
 ## 0.5.2 (2017-01-31)
 
 - Fix inspection message that said "expected n parameters, but got n".
