@@ -142,7 +142,7 @@ class DalesbredInstantiationInspection : BaseJavaLocalInspectionTool() {
                 "java.util.TimeZone",
                 "org.w3c.dom.Document")
 
-        private val FIND_METHOD_CALL = psiExpression().methodCall(findMethod())
+        private val FIND_METHOD_CALL = psiExpression().methodCall(findMethod)
 
         private fun verifyUniquePrimitive(parameters: Array<PsiExpression>, holder: ProblemsHolder) {
             if (parameters.size == 0) return

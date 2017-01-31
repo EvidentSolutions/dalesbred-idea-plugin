@@ -32,14 +32,6 @@ class DalesbredIncorrectParameterCountInspectionTest : InspectionTestCase() {
         verifyHighlighting("incorrectParameterCount/Updates.java")
     }
 
-    fun testSimpleCasesLegacy() {
-        verifyHighlighting("incorrectParameterCount/legacy/SimpleCases.java")
-    }
-
-    fun testUpdatesLegacy() {
-        verifyHighlighting("incorrectParameterCount/legacy/Updates.java")
-    }
-
     private fun verifyHighlighting(file: String) {
         myFixture.enableInspections(DalesbredIncorrectParameterCountInspection::class.java)
         myFixture.testHighlighting(file)

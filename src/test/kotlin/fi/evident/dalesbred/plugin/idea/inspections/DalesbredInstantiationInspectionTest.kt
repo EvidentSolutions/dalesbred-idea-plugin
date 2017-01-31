@@ -64,38 +64,6 @@ class DalesbredInstantiationInspectionTest : InspectionTestCase() {
         verifyHighlighting("instantiation/DefaultInstantiable.java")
     }
 
-    fun testSimpleCasesLegacy() {
-        verifyHighlighting("instantiation/legacy/SimpleCases.java")
-    }
-
-    fun testConstructorValidationLegacy() {
-        verifyHighlighting("instantiation/legacy/ConstructorValidation.java")
-    }
-
-    fun testMapConstructionLegacy() {
-        verifyHighlighting("instantiation/legacy/MapConstruction.java")
-    }
-
-    fun testUpdatesWithReturningLegacy() {
-        verifyHighlighting("instantiation/legacy/UpdatesWithReturning.java")
-    }
-
-    fun testNonExactPropertyNamesLegacy() {
-        verifyHighlighting("instantiation/legacy/NonExactPropertyNames.java")
-    }
-
-    fun testEnumConstructionLegacy() {
-        verifyHighlighting("instantiation/legacy/EnumConstruction.java")
-    }
-
-    fun testUninstantiatedPropertiesLegacy() {
-        verifyHighlighting("instantiation/legacy/UninstantiatedProperties.java")
-    }
-
-    fun testIgnoredMembersLegacy() {
-        verifyHighlighting("instantiation/legacy/IgnoredMembers.java")
-    }
-
     private fun verifyHighlighting(file: String) {
         myFixture.enableInspections(DalesbredInstantiationInspection::class.java)
         myFixture.testHighlighting(file)

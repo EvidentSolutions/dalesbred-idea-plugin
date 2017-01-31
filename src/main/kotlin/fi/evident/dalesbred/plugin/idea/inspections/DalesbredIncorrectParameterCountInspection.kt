@@ -67,10 +67,10 @@ class DalesbredIncorrectParameterCountInspection : BaseJavaLocalInspectionTool()
 
     companion object {
 
-        private val FIND_METHOD_CALL = psiExpression().methodCall(or(findMethod(), executeQueryMethod()))
-        private val SQL_QUERY_METHOD_CALL = psiExpression().methodCall(sqlQueryMethod())
-        private val UPDATE_METHOD_CALL = psiExpression().methodCall(updateMethod())
-        private val UPDATE_AND_PROCESS_GENERATED_KEYS_METHOD_CALL = psiExpression().methodCall(updateAndProcessGeneratedKeysMethod())
+        private val FIND_METHOD_CALL = psiExpression().methodCall(or(findMethod, executeQueryMethod))
+        private val SQL_QUERY_METHOD_CALL = psiExpression().methodCall(sqlQueryMethod)
+        private val UPDATE_METHOD_CALL = psiExpression().methodCall(updateMethod)
+        private val UPDATE_AND_PROCESS_GENERATED_KEYS_METHOD_CALL = psiExpression().methodCall(updateAndProcessGeneratedKeysMethod)
 
         private fun verifyQueryParameterCount(parameters: Array<PsiExpression>, queryIndex: Int, holder: ProblemsHolder) {
             if (queryIndex >= parameters.size) return
